@@ -1,30 +1,33 @@
 <?php
-require_once __DIR__."/../inc/session.php";
+require_once __DIR__."/../inc/session.inc.php";
 require_once __DIR__."/../inc/header.inc.php";
+require_once __DIR__."/../inc/functions.inc.php";
+// debug($_SERVER);
+// var_dump($_SERVER);
+if($_SERVER["REQUEST_METHOD"] == "POST"){
+    if(isset($_POST["username"]) && isset($_POST["mdp"])){
+        $username = $_POST["username"];
+        $mdp = $_POST["mdp"];
+        $userCheckResult = checkUser($username, $mdp);
+        // $resultsArray = ["emptyUsername" => -1, "emptyPassword" => -2, "wrongUsernameOrPassword" => -3];
+        if($userCheckResult === -1){
+            header("Location: ../index.php?action=emptyUsername");
+        }
+        if($userCheckResult === -2){
+            header("Location: ../index.php?action=emptyPassword");
+        }
+        if($userCheckResult === -3){
+            header("Location: ../index.php?action=wrongInfo&username=$username");
+        }
+        if($userCheckResult > 0){
+            $_SESSION["userId"]=$userCheckResult;
+            $_SESSION["connected"] = true;
+            header("Location: ./dashboard.php");
+        }
+
+    }
+}else{
+    header("Location: ../index.php?action=loginNeeded");
+}
 ?>
 
-<form method="POST">
-
-<div class="field">
-  <label class="label" for="username">Votre pseudo</label>
-  <div class="control has-icons-left has-icons-right">
-    <input class="input" type="text" placeholder="Entrez votre pseudo" name="username">
-  </div>
-</div>
-
-<div class="field">
-  <p class="control has-icons-left">
-    <label class="label" for="mdp">Votre mot de passe</label>
-    <input class="input" type="password" placeholder="Entrez votre mot de passe" name="mdp">
-  </p>
-</div>
-
-<div class="field">
-  <p class="control">
-    <button type="submit" class="button is-success">
-      Entrez
-    </button>
-  </p>
-</div>
-
-</form>
