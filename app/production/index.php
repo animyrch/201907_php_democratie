@@ -46,7 +46,13 @@ if(isset($_GET["username"])){
                     Votre pseudo ou votre mot de passe est incorrect
                 <?php } ?>
 
-            <?php } ?>
+                <?php if($action == "disconnect"){ ?>
+                    Au revoir et à bientôt
+                <?php
+                unset($_SESSION["userId"]);
+                unset($_SESSION["connected"]);
+                    }
+                } ?>
             </p>
             <button type="submit" class="button is-success">
                 Entrez

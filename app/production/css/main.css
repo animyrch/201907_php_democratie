@@ -2,3 +2,11 @@
     width: 50%;
     margin: auto;
 }
+.container{
+    margin: auto;
+    width: 80%;
+}
+
+.container .table{
+    width: 100%;
+}

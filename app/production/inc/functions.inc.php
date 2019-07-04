@@ -19,13 +19,13 @@ function checkUser($username, $mdp){
 
     global $db;
     
-    $query = $db->prepare('SELECT id FROM user WHERE pseudo = :pseudo AND mdp = :mdp');
+    $query = $db->prepare('SELECT id_user FROM user WHERE pseudo = :pseudo AND mdp = :mdp');
     $params = array("mdp" => $mdp, "pseudo" => $username);
     $query->execute($params);
     $user = $query->fetch(PDO::FETCH_ASSOC);
 
     if($user){
-        return (integer) $user["id"];
+        return (integer) $user["id_user"];
     }else{
         return $resultsArray["wrongUsernameOrPassword"];
     }
