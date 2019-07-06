@@ -2,6 +2,22 @@
 require_once __DIR__."/../inc/session.inc.php";
 require_once __DIR__."/../inc/header.inc.php";
 require_once __DIR__."/../inc/functions.inc.php";
+$hasError = false;
+$errorMsg = "";
+if(!empty($_GET["action"])){
+    $action = $_GET["action"];
+    if($action === "delete" && isset($_GET["proposition"])){
+        if(deleteProposition($userId, $_GET["proposition"]) !== 1){
+            $hasError = true;
+        }
+    }else{
+        $hasError = true;
+    }
+}
+if($hasError){
+    $errorMsg = "Vous ne pouvez supprimer que vos propres propositions";
+}
+
 $userPropositions = getUserPropositions($userId);
 ?>
 
@@ -13,7 +29,9 @@ $userPropositions = getUserPropositions($userId);
         <hr>
         <h3>VOS PROPOSITIONS</h3>
         <div>Nombre de propositions : <?=count($userPropositions)?></div>
-
+        <?php if($errorMsg != ""){ ?>
+        <div class="notification is-primary"><?= $errorMsg ?></div>
+        <?php } ?>
         <table class="table">
             <thead>
                 <tr>
@@ -52,7 +70,7 @@ $userPropositions = getUserPropositions($userId);
                     <?php }else{ ?>
                         <td><a class="button is-link">Voir</a></td>
                     <?php } ?>
-                    <td><a class="button is-danger">Supprimer</a></td>
+                    <td><a href="?action=delete&proposition=<?=$proposition->id_prop?>" class="button is-danger">Supprimer</a></td>
 
                 </tr>
             <?php } ?>

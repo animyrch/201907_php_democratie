@@ -112,7 +112,7 @@ if($resultCreatePropositionWithInvalidUserId3 !== -3){
     array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
 }
 
-if($resultCreateCorrectProposition !== 1){
+if($resultCreateCorrectProposition < 1){
     $errorContent = "a new proposition is not correctly created";
     $errorNo = 9893;
     array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
@@ -121,10 +121,10 @@ if($resultCreateCorrectProposition !== 1){
 //TODO - this should also generate a line in the table VOTER. 
 
 
-//Reading proposition of a user
+//Reading propositions of a user
 $testTitle = "A new proposition";
 $testContent = "Test content for the new proposition during a proposition read test.";
-$testUser = 1; //for User2
+$testUser = 1; //for User1
 createProposition($testTitle, $testContent, $testUser);
 
 //error management
@@ -171,6 +171,76 @@ if(!$titleMatch){
 if(!$titleMatch){
     $errorContent = "correct proposition content was not present";
     $errorNo = 2898;
+    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+}
+
+//Deleting a proposition of a user
+$testTitle = "A proposition to be deleted";
+$testContent = "Test content for the new proposition during a proposition deletion test.";
+$testUser = 2; //for User2
+$testPropositionId = createProposition($testTitle, $testContent, $testUser);
+
+//error management
+// $resultsArray = ["invalidUserId" => -1, "invalidPropositionId" => -2];
+$resultDeletePropositionWithInvalidUserId1 = deleteProposition("", $testPropositionId);
+$resultDeletePropositionWithInvalidUserId2 = deleteProposition(null, $testPropositionId);
+$resultDeletePropositionWithInvalidUserId3 = deleteProposition(-1, $testPropositionId);
+$resultDeletePropositionWithInvaliPropositionId1 = deleteProposition($testUser, "");
+$resultDeletePropositionWithInvaliPropositionId2 = deleteProposition($testUser, null);
+$resultDeletePropositionWithInvaliPropositionId3 = deleteProposition($testUser, -1);
+
+//correct use
+$resultDeleteCorrectProposition = deleteProposition($testUser, $testPropositionId);
+
+if($resultDeletePropositionWithInvalidUserId1 !== -1){
+    $errorContent = "empty user id is not detected during proposition deletion";
+    $errorNo = 7190;
+    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+}
+if($resultDeletePropositionWithInvalidUserId2 !== -1){
+    $errorContent = "null user id is not detected during proposition read";
+    $errorNo = 8989;
+    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+}
+if($resultDeletePropositionWithInvalidUserId3 !== -1){
+    $errorContent = "incorrect user id is not detected during proposition read";
+    $errorNo = 8910;
+    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+}
+if($resultDeletePropositionWithInvaliPropositionId1 !== -2){
+    $errorContent = "empty proposition id is not detected during proposition deletion";
+    $errorNo = 9091;
+    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+}
+if($resultDeletePropositionWithInvaliPropositionId2 !== -2){
+    $errorContent = "null proposition id is not detected during proposition read";
+    $errorNo = 8928;
+    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+}
+if($resultDeletePropositionWithInvaliPropositionId3 !== -2){
+    $errorContent = "incorrect proposition id is not detected during proposition read";
+    $errorNo = 8711;
+    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+}
+
+if($resultDeleteCorrectProposition !== 1){
+    $errorContent = "proposition deletion has encountered an error";
+    $errorNo = 8945;
+    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+}
+
+$resultGetCorrectPropositions = getUserPropositions($testUser);
+$propositionMatch = false;
+foreach($resultGetCorrectPropositions as $key => $proposition){
+
+    if($proposition->id_prop === $resultDeleteCorrectProposition){
+        $titleMatch = true;
+    }
+
+}
+if($propositionMatch){
+    $errorContent = "correct proposition was not deleted";
+    $errorNo = 8791;
     array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
 }
 

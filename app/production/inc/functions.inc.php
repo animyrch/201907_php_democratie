@@ -53,6 +53,23 @@ function createProposition($title, $content, $userId){
     $query = $db->prepare('INSERT INTO proposition (`id_user`, `title`, `contenu`, `nbPour`, `nbContre`, `date_valid`, `date_create`) VALUES (:userId, :title, :contenu, 1, 0, NULL, :today);');
     $params = array('userId' => $userId, 'title' => $title, 'contenu' => $content, 'today' => date("Y-m-d"));
     $query->execute($params);
+    return (integer) $db->lastInsertId();
+}
+
+function deleteProposition($userId, $propositionId){
+    $resultsArray = ["invalidUserId" => -1, "invalidPropositionId" => -2];
+    
+    if(empty($userId) || $userId < 1){
+        return $resultsArray["invalidUserId"];
+    }
+    if(empty($propositionId) || $propositionId < 1){
+        return $resultsArray["invalidPropositionId"];
+    }
+
+    global $db;
+    $query = $db->prepare("DELETE FROM proposition WHERE `id_user` = :userId AND `id_prop` = :propositionId LIMIT 1");
+    $params = array("userId" => $userId, "propositionId" => $propositionId);
+    $query->execute($params);
     return $query->rowCount();
 }
 
