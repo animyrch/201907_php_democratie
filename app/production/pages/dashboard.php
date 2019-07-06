@@ -1,6 +1,8 @@
 <?php
 require_once __DIR__."/../inc/session.inc.php";
 require_once __DIR__."/../inc/header.inc.php";
+require_once __DIR__."/../inc/functions.inc.php";
+$userPropositions = getUserPropositions($userId);
 ?>
 
 <section>
@@ -10,7 +12,7 @@ require_once __DIR__."/../inc/header.inc.php";
         <div><a href="../index.php?action=disconnect">Se déconnecter</a></div>
         <hr>
         <h3>VOS PROPOSITIONS</h3>
-        <div>Nombre de propositions : 1</div>
+        <div>Nombre de propositions : <?=count($userPropositions)?></div>
 
         <table class="table">
             <thead>
@@ -36,25 +38,24 @@ require_once __DIR__."/../inc/header.inc.php";
                 </tr>
             </tfoot>
             <tbody>
+            <?php foreach($userPropositions as $proposition){ 
+                    $propositionValidated = $proposition->date_valid != NULL; ?>
                 <tr>
-                    <th>43</th>
-                    <td>TEST</td>
-                    <td>oui</td>
-                    <td>1</td>
-                    <td>2</td>
-                    <td><a class="button is-link">modifier</a></td>
-                    <td><a class="button is-danger">supprimer</a></td>
+                    <th><?=$proposition->id_prop?></th>
+                    <td><?=$proposition->title?></td>
+                    <td><?=($propositionValidated ? "oui" : "non")?></td>
+                    <td><?=$proposition->nbPour?></td>
+                    <td><?=$proposition->nbContre?></td>
+
+                    <?php if(!$propositionValidated){ ?>
+                        <td><a class="button is-link">Modifier</a></td>
+                    <?php }else{ ?>
+                        <td><a class="button is-link">Voir</a></td>
+                    <?php } ?>
+                    <td><a class="button is-danger">Supprimer</a></td>
+
                 </tr>
-                <tr>
-                    
-                <th>43</th>
-                    <td>TEST</td>
-                    <td>oui</td>
-                    <td>1</td>
-                    <td>2</td>
-                    <td><a class="button is-link">modifier</a></td>
-                    <td><a class="button is-danger">supprimer</a></td>
-                </tr>
+            <?php } ?>
             </tbody>
         </table>
 

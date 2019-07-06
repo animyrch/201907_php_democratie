@@ -56,4 +56,16 @@ function createProposition($title, $content, $userId){
     return $query->rowCount();
 }
 
+function getUserPropositions($userId){
+    $resultsArray = ["invalidUserId" => -1];
+
+    if(empty($userId) || $userId < 1){
+        return $resultsArray["invalidUserId"];
+    }
+    global $db;
+
+    $query = $db->prepare('SELECT * FROM proposition WHERE `id_user` = :userId');
+    $query->execute(array('userId'=>$userId));
+    return $query->fetchAll(PDO::FETCH_OBJ);
+}
 ?>

@@ -120,6 +120,60 @@ if($resultCreateCorrectProposition !== 1){
 
 //TODO - this should also generate a line in the table VOTER. 
 
+
+//Reading proposition of a user
+$testTitle = "A new proposition";
+$testContent = "Test content for the new proposition during a proposition read test.";
+$testUser = 1; //for User2
+createProposition($testTitle, $testContent, $testUser);
+
+//error management
+// $resultsArray = ["invalidUserId" => -1];
+$resultGetPropositionWithInvalidUserId = getUserPropositions("");
+$resultGetPropositionWithInvalidUserId2 = getUserPropositions(null);
+$resultGetPropositionWithInvalidUserId3 = getUserPropositions(-1);
+//correct use
+$resultGetCorrectPropositions = getUserPropositions($testUser);
+
+if($resultGetPropositionWithInvalidUserId !== -1){
+    $errorContent = "empty user id is not detected during proposition read";
+    $errorNo = 7813;
+    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+}
+if($resultGetPropositionWithInvalidUserId2 !== -1){
+    $errorContent = "null user id is not detected during proposition read";
+    $errorNo = 8798;
+    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+}
+if($resultGetPropositionWithInvalidUserId !== -1){
+    $errorContent = "incorrect user id is not detected during proposition read";
+    $errorNo = 3513;
+    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+}
+
+$titleMatch = false;
+$contentMatch = false;
+foreach($resultGetCorrectPropositions as $key => $proposition){
+
+    if($proposition->title === $testTitle){
+        $titleMatch = true;
+    }
+    if($proposition->contenu === $testContent){
+        $contentMatch = true;
+    }
+
+}
+if(!$titleMatch){
+    $errorContent = "correct proposition title was not present";
+    $errorNo = 1989;
+    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+}
+if(!$titleMatch){
+    $errorContent = "correct proposition content was not present";
+    $errorNo = 2898;
+    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+}
+
 /******************* testing proposition Crud END ********************/
 
 
