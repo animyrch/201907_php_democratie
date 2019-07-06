@@ -1,9 +1,6 @@
 <?php
 require_once __DIR__."/../inc/session.inc.php";
 require_once __DIR__."/../inc/header.inc.php";
-if(empty($_SESSION["userId"]) || !$_SESSION["connected"]){
-    header("Location: login.php");
-}
 ?>
 
 <section>
@@ -61,7 +58,7 @@ if(empty($_SESSION["userId"]) || !$_SESSION["connected"]){
             </tbody>
         </table>
 
-        <a class="button is-primary is-focused">Ajouter une proposition</a>
+        <a href="proposition_create.php" class="button is-primary is-focused">Ajouter une proposition</a>
 
         <hr>
         <h3>Propositions soumises au vote</h3>

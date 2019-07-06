@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__."/inc/session.inc.php";
+session_start();
 require_once __DIR__."/inc/db-connect.inc.php";
 require_once __DIR__."/inc/header.inc.php";
 if(isset($_GET["username"])){

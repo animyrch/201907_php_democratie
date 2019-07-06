@@ -7,13 +7,14 @@ function debug($elem){
     echo "</pre>";
 }
 
+/**************** USER CRUD *************************/
 function checkUser($username, $mdp){
     $resultsArray = ["emptyUsername" => -1, "emptyPassword" => -2, "wrongUsernameOrPassword" => -3];
     
-    if($username == ""){
+    if(empty($username)){
         return $resultsArray["emptyUsername"];
     }
-    if($mdp == ""){
+    if(empty($mdp)){
         return $resultsArray["emptyPassword"];
     }
 
@@ -30,4 +31,29 @@ function checkUser($username, $mdp){
         return $resultsArray["wrongUsernameOrPassword"];
     }
 }
+
+
+/**************** PROPOSITION CRUD *************************/
+
+function createProposition($title, $content, $userId){
+    $resultsArray = ["emptyTitle" => -1, "emptyContent" => -2, "invalidUserId" => -3];
+
+    if(empty($title)){
+        return $resultsArray["emptyTitle"];
+    }
+    if(empty($content)){
+        return $resultsArray["emptyContent"];
+    }
+    if(empty($userId) || $userId < 1){
+        return $resultsArray["invalidUserId"];
+    }
+
+    global $db;
+
+    $query = $db->prepare('INSERT INTO proposition (`id_user`, `title`, `contenu`, `nbPour`, `nbContre`, `date_valid`, `date_create`) VALUES (:userId, :title, :contenu, 1, 0, NULL, :today);');
+    $params = array('userId' => $userId, 'title' => $title, 'contenu' => $content, 'today' => date("Y-m-d"));
+    $query->execute($params);
+    return $query->rowCount();
+}
+
 ?>
