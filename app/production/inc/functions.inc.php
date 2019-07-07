@@ -44,7 +44,7 @@ function createProposition($title, $content, $userId){
     if(empty($content)){
         return $resultsArray["emptyContent"];
     }
-    if(empty($userId) || $userId < 1){
+    if(invalidId($userId)){
         return $resultsArray["invalidUserId"];
     }
 
@@ -59,10 +59,10 @@ function createProposition($title, $content, $userId){
 function deleteProposition($userId, $propositionId){
     $resultsArray = ["invalidUserId" => -1, "invalidPropositionId" => -2];
     
-    if(empty($userId) || $userId < 1){
+    if(invalidId($userId)){
         return $resultsArray["invalidUserId"];
     }
-    if(empty($propositionId) || $propositionId < 1){
+    if(invalidId($propositionId)){
         return $resultsArray["invalidPropositionId"];
     }
 
@@ -73,10 +73,32 @@ function deleteProposition($userId, $propositionId){
     return $query->rowCount();
 }
 
+function getProposition($userId , $propositionId){
+    $statusCode = 0;
+    $resultsArray = ["success" => 0, "invalidUserId" => -1, "invalidPropositionId" => -2];
+    if(invalidId($userId)){
+        $statusCode =  $resultsArray["invalidUserId"];
+    }
+    if(invalidId($propositionId)){
+        $statusCode = $resultsArray["invalidPropositionId"];
+    }
+    if($statusCode !== 0){
+        return array($statusCode, "", "");
+    }
+    
+    $statusCode = $resultsArray["success"];
+    global $db;
+    $query = $db->prepare("SELECT * FROM proposition WHERE  `id_user` = :userId AND `id_prop` = :propositionId");
+    $params = array("userId" => $userId, "propositionId" => $propositionId);
+    $query->execute($params);
+    $resultObject = $query->fetch(PDO::FETCH_OBJ);
+    return array($statusCode, $resultObject->title, $resultObject->contenu);
+}
+
 function getUserPropositions($userId){
     $resultsArray = ["invalidUserId" => -1];
 
-    if(empty($userId) || $userId < 1){
+    if(invalidId($userId)){
         return $resultsArray["invalidUserId"];
     }
     global $db;
@@ -84,5 +106,34 @@ function getUserPropositions($userId){
     $query = $db->prepare('SELECT * FROM proposition WHERE `id_user` = :userId');
     $query->execute(array('userId'=>$userId));
     return $query->fetchAll(PDO::FETCH_OBJ);
+}
+
+function updateProposition($userId, $propositionId, $title, $contenu){
+    $resultsArray = ["success" => 0, "emptyTitle" => -1, "emptyContent" => -2, "invalidUserId" => -3, "invalidPropositionId" => -4];
+
+    if(empty($title)){
+        return $resultsArray["emptyTitle"];
+    }
+    if(empty($contenu)){
+        return $resultsArray["emptyContent"];
+    }
+    if(invalidId($userId)){
+        return $resultsArray["invalidUserId"];
+    }
+    if(invalidId($propositionId)){
+        return $resultsArray["invalidPropositionId"];
+    }
+
+    global $db;
+    $query = $db->prepare("UPDATE proposition SET `title` = :title, `contenu` = :contenu WHERE `id_user` = :userId AND `id_prop` = :propositionId;");
+    
+    $params = array("userId" => $userId, "propositionId" => $propositionId, "title" => $title, "contenu" => $contenu);
+    $query->execute($params);
+    return $query->rowCount();
+}
+
+/**************** UTILITY FUNCTIONS *************************/
+function invalidId($userId){
+    return (empty($userId) || $userId < 1);
 }
 ?>

@@ -2,11 +2,36 @@
 require_once __DIR__."/../inc/session.inc.php";
 require_once __DIR__."/../inc/header.inc.php";
 
-$title = "";
-$contenu = "";
 $messageErreur = "";
+$contenu = "";
+$title = "";
 
+//first access
+if($_SERVER["REQUEST_METHOD"] == "GET"){
+    if(!empty($_GET["proposition"])){
+        $propositionId = $_GET["proposition"];
+    }else{
+        $messageErreur = "Aucune proposition n'est séléctionnée";
+    }
+    if($messageErreur === ""){
+        require_once __DIR__."/../inc/functions.inc.php";
+        $proposition = getProposition($userId, $propositionId);
+        if($proposition[0] === 0){
+            $title = $proposition[1];
+            $contenu = $proposition[2];
+        }else{
+            header("Location: dashboard.php?action=propositionUpdateFailed");
+        }
+    }
+}
+
+//modification submission
 if($_SERVER["REQUEST_METHOD"] == "POST"){
+    if(!empty($_POST["propositionId"])){
+        $propositionId = $_POST["propositionId"];
+    }else{
+        header("Location: dashboard.php?action=propositionUpdateFailed");
+    }
     if(!empty($_POST["contenu"])){
         $contenu = $_POST["contenu"];
     }else{
@@ -20,8 +45,8 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     //If, after the checks, there is no error, we enter data to DB et redirect to dashboard
     if($messageErreur === ""){
         require_once __DIR__."/../inc/functions.inc.php";
-        createProposition($title, $contenu, $userId);
-        header("Location: dashboard.php?action=propositionDone");
+        updateProposition($userId, $propositionId, $title, $contenu);
+        header("Location: dashboard.php?action=propositionUpdated");
     }
 }
 
@@ -29,7 +54,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 <section>
     <div class="container">
         <form method="POST">
-            <h1 class="title is-1">Ajouter une proposition</h1>
+            <h1 class="title is-1">Détails de votre proposition</h1>
             <div class="box">
                 <article class="media">
                     <div class="media-content">
@@ -46,7 +71,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                                     <textarea class="textarea" placeholder="Le contenu de votre proposition" name="contenu"><?=$contenu?></textarea>
                                 </div>
                             </div>
-                            <div class="notification is-primary">Lorque vous créez une proposition, vous votez forcément pour elle.</div>
+                            <div class="notification is-primary">Lorque vous soumettez une proposition au vote, il ne sera plus possible de la modifier.</div>
                             <div class="field">
                                 <p class="control">
                                     <p class="help is-danger">
@@ -54,9 +79,13 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                                     </p>
                                 </p>
                             </div>
+                            <input name="propositionId" style="display : none" value="<?=$propositionId?>">
                             <div class="field is-grouped">
                                 <div class="control">
-                                    <button type="submit" class="button is-link">Envoyer</button>
+                                    <button type="submit" class="button is-dark">Soumettre au vote</button>
+                                </div>
+                                <div class="control">
+                                    <button type="submit" class="button is-link">Mettre à jour</button>
                                 </div>
                                 <div class="control">
                                     <a href="dashboard.php" class="button is-text">Revenir au tableau de bord</a>

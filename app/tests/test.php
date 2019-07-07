@@ -244,6 +244,129 @@ if($propositionMatch){
     array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
 }
 
+//reading a specific proposition
+$testTitle = "A new proposition to get";
+$testContent = "Test content for the new proposition to be targetted during a proposition read test.";
+$testUser = 1; //for User1
+$testPropositionId = createProposition($testTitle, $testContent, $testUser);
+
+//error management
+//$resultsArray = ["success" => 0, "invalidUserId" => -1, "invalidPropositionId" => -2];
+$resultGetPropositionWithInvalidUserId = getProposition("", $testPropositionId);
+$resultGetPropositionWithInvalidUserId2 = getProposition(null, $testPropositionId);
+$resultGetPropositionWithInvalidUserId3 = getProposition(-1, $testPropositionId);
+$resultGetPropositionWithInvalidPropositionId = getProposition($testUser, "");
+$resultGetPropositionWithInvalidPropositionId2 = getProposition($testUser, null);
+$resultGetPropositionWithInvalidPropositionId3 = getProposition($testUser, -1);
+//correct use
+$resultGetCorrectProposition = getProposition($testUser, $testPropositionId);
+
+if($resultGetPropositionWithInvalidUserId[0] !== -1){
+    $errorContent = "empty user id is not detected during proposition read";
+    $errorNo = 8954;
+    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+}
+if($resultGetPropositionWithInvalidUserId2[0] !== -1){
+    $errorContent = "null user id is not detected during proposition read";
+    $errorNo = 8983;
+    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+}
+if($resultGetPropositionWithInvalidUserId[0] !== -1){
+    $errorContent = "incorrect user id is not detected during proposition read";
+    $errorNo = 7388;
+    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+}
+if($resultGetPropositionWithInvalidPropositionId[0] !== -2){
+    $errorContent = "empty proposition id is not detected during proposition read";
+    $errorNo = 8788;
+    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+}
+if($resultGetPropositionWithInvalidPropositionId2[0] !== -2){
+    $errorContent = "null proposition id is not detected during proposition read";
+    $errorNo = 3453;
+    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+}
+if($resultGetPropositionWithInvalidPropositionId[0] !== -2){
+    $errorContent = "incorrect proposition id is not detected during proposition read";
+    $errorNo = 3275;
+    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+}
+
+if($resultGetCorrectProposition[0] != 0){
+    $errorContent = "correct response code was not given";
+    $errorNo = 8938;
+    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+}
+if($resultGetCorrectProposition[1] != $testTitle){
+    $errorContent = "correct proposition title was not found";
+    $errorNo = 3452;
+    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+}
+if($resultGetCorrectProposition[2] != $testContent){
+    $errorContent = "correct proposition content was not present";
+    $errorNo = 3989;
+    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+}
+
+//Updating a proposition
+$testTitle = "Test Title for update";
+$testContent = "Test content for the test proposition update with a test title from the test user User2.";
+$testUser = 2; //for User2
+$testPropositionId = createProposition($testTitle, $testContent, $testUser);
+
+$newTestTitle = "New title for test update";
+$newTestContent = "This content is the updated version if the previous version";
+//error management
+// updateProposition($userId, $propositionId, $title, $contenu){
+// $resultsArray = ["success" => 0, "emptyTitle" => -1, "emptyContent" => -2, "invalidUserId" => -3, "invalidPropositionId" => -4];
+$resultUpdatePropositionWithEmptyUserId = updateProposition("", $testPropositionId, $newTestTitle, $newTestContent);
+$resultUpdatePropositionWithEmptyPropositionId = updateProposition($testUser, "", $newTestTitle, $newTestContent);
+$resultUpdatePropositionWithEmptTitle = updateProposition($testUser, $testPropositionId, "", $newTestContent);
+$resultUpdatePropositionWithEmptContent = updateProposition($testUser, $testPropositionId, $newTestTitle, "");
+
+// //correct use
+// var_dump($testUser, $testPropositionId, $testTitle, $testContent);
+$resultUpdateCorrectProposition = updateProposition($testUser, $testPropositionId, $newTestTitle, $newTestContent);
+// var_dump($resultUpdateCorrectProposition);
+if($resultUpdatePropositionWithEmptyUserId !== -3){
+    $errorContent = "incorrect user id is not detected during proposition update";
+    $errorNo = 6474;
+    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+}
+if($resultUpdatePropositionWithEmptyPropositionId !== -4){
+    $errorContent = "incorrect proposition id is not detected during proposition update";
+    $errorNo = 9573;
+    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+}
+if($resultUpdatePropositionWithEmptTitle !== -1){
+    $errorContent = "empty title is not detected during proposition update";
+    $errorNo = 3742;
+    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+}
+if($resultUpdatePropositionWithEmptContent !== -2){
+    $errorContent = "empty content is not detected during proposition creation";
+    $errorNo = 2746;
+    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+}
+
+if($resultUpdateCorrectProposition !== 1){
+    $errorContent = "the proposition is not correctly updated";
+    $errorNo = 5743;
+    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+}
+
+$newPropositionContents = getProposition($testUser, $testPropositionId);
+if($newPropositionContents[1] !== $newTestTitle){
+    $errorContent = "the proposition title was not correctly updated";
+    $errorNo = 5345;
+    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));    
+}
+if($newPropositionContents[2] !== $newTestContent){
+    $errorContent = "the proposition content was not correctly updated";
+    $errorNo = 3578;
+    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));    
+}
+
 /******************* testing proposition Crud END ********************/
 
 

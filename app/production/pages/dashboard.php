@@ -2,20 +2,20 @@
 require_once __DIR__."/../inc/session.inc.php";
 require_once __DIR__."/../inc/header.inc.php";
 require_once __DIR__."/../inc/functions.inc.php";
-$hasError = false;
-$errorMsg = "";
+$displayMsg = "";
 if(!empty($_GET["action"])){
     $action = $_GET["action"];
     if($action === "delete" && isset($_GET["proposition"])){
         if(deleteProposition($userId, $_GET["proposition"]) !== 1){
-            $hasError = true;
+            $displayMsg = "Vous ne pouvez supprimer que vos propres propositions";
         }
-    }else{
-        $hasError = true;
     }
-}
-if($hasError){
-    $errorMsg = "Vous ne pouvez supprimer que vos propres propositions";
+    if($action === "propositionUpdateFailed"){
+        $displayMsg = "Vous ne pouvez modifier que vos propres propositions";
+    }
+    if($action === "propositionUpdated"){
+        $displayMsg = "Proposition modifiée";
+    }
 }
 
 $userPropositions = getUserPropositions($userId);
@@ -29,8 +29,8 @@ $userPropositions = getUserPropositions($userId);
         <hr>
         <h3>VOS PROPOSITIONS</h3>
         <div>Nombre de propositions : <?=count($userPropositions)?></div>
-        <?php if($errorMsg != ""){ ?>
-        <div class="notification is-primary"><?= $errorMsg ?></div>
+        <?php if($displayMsg != ""){ ?>
+        <div class="notification is-primary"><?= $displayMsg ?></div>
         <?php } ?>
         <table class="table">
             <thead>
@@ -66,7 +66,7 @@ $userPropositions = getUserPropositions($userId);
                     <td><?=$proposition->nbContre?></td>
 
                     <?php if(!$propositionValidated){ ?>
-                        <td><a class="button is-link">Modifier</a></td>
+                        <td><a href="proposition_modify.php?proposition=<?=$proposition->id_prop?>" class="button is-link">Modifier</a></td>
                     <?php }else{ ?>
                         <td><a class="button is-link">Voir</a></td>
                     <?php } ?>
