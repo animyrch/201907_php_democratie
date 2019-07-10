@@ -297,12 +297,12 @@ if($resultGetCorrectProposition[0] != 0){
     $errorNo = 8938;
     array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
 }
-if($resultGetCorrectProposition[1] != $testTitle){
+if($resultGetCorrectProposition[1]->title != $testTitle){
     $errorContent = "correct proposition title was not found";
     $errorNo = 3452;
     array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
 }
-if($resultGetCorrectProposition[2] != $testContent){
+if($resultGetCorrectProposition[1]->contenu != $testContent){
     $errorContent = "correct proposition content was not present";
     $errorNo = 3989;
     array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
@@ -356,17 +356,50 @@ if($resultUpdateCorrectProposition !== 1){
 }
 
 $newPropositionContents = getProposition($testUser, $testPropositionId);
-if($newPropositionContents[1] !== $newTestTitle){
+if($newPropositionContents[1]->title !== $newTestTitle){
     $errorContent = "the proposition title was not correctly updated";
     $errorNo = 5345;
     array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));    
 }
-if($newPropositionContents[2] !== $newTestContent){
+if($newPropositionContents[1]->contenu !== $newTestContent){
     $errorContent = "the proposition content was not correctly updated";
     $errorNo = 3578;
     array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));    
 }
 
+//submitting a proposition to vote
+$testTitle = "Test Title for submittoVote";
+$testContent = "Test content for the test validate update for vote with a test title from the test user User2.";
+$testUser = 2; //for User2
+$testPropositionId = createProposition($testTitle, $testContent, $testUser);
+$resultSubmitPropositionWithEmptyUserId = submitPropositionToVote(null, $testPropositionId);
+$resultSubmitPropositionWithEmptyPropositionId = submitPropositionToVote($testUser, null);
+$resultCorrectSubmitProposition = submitPropositionToVote($testUser, $testPropositionId);
+
+
+//error management
+//$resultsArray = ["success" => 0, "invalidUserId" => -1, "invalidPropositionId" => -2];
+if($resultSubmitPropositionWithEmptyUserId !== -1){
+    $errorContent = "incorrect user id is not detected during proposition submission to vote";
+    $errorNo = 3421;
+    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+}
+if($resultSubmitPropositionWithEmptyPropositionId !== -2){
+    $errorContent = "incorrect proposition id is not detected during proposition submission to vote";
+    $errorNo = 9289;
+    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+}
+if($resultCorrectSubmitProposition !== 0){
+    $errorContent = "the proposition content was not correctly submitted to vote";
+    $errorNo = 9289;
+    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+}
+$newPropositionContents = getProposition($testUser, $testPropositionId);
+if($newPropositionContents[1]->date_valid === ""){
+    $errorContent = "the proposition content was not correctly submitted to vote";
+    $errorNo = 5345;
+    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));    
+}
 /******************* testing proposition Crud END ********************/
 
 

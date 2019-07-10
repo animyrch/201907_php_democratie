@@ -17,8 +17,8 @@ if($_SERVER["REQUEST_METHOD"] == "GET"){
         require_once __DIR__."/../inc/functions.inc.php";
         $proposition = getProposition($userId, $propositionId);
         if($proposition[0] === 0){
-            $title = $proposition[1];
-            $contenu = $proposition[2];
+            $title = $proposition[1]->title;
+            $contenu = $proposition[1]->contenu;
         }else{
             header("Location: dashboard.php?action=propositionUpdateFailed");
         }
@@ -45,7 +45,11 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     //If, after the checks, there is no error, we enter data to DB et redirect to dashboard
     if($messageErreur === ""){
         require_once __DIR__."/../inc/functions.inc.php";
-        updateProposition($userId, $propositionId, $title, $contenu);
+        if(isset($_POST['btnUpdate'])){
+            updateProposition($userId, $propositionId, $title, $contenu);
+        }else{
+            submitPropositionToVote($userId, $propositionId);
+        }
         header("Location: dashboard.php?action=propositionUpdated");
     }
 }
@@ -82,10 +86,10 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                             <input name="propositionId" style="display : none" value="<?=$propositionId?>">
                             <div class="field is-grouped">
                                 <div class="control">
-                                    <button type="submit" class="button is-dark">Soumettre au vote</button>
+                                    <button type="submit" name="btnValid" class="button is-dark">Soumettre au vote</button>
                                 </div>
                                 <div class="control">
-                                    <button type="submit" class="button is-link">Mettre à jour</button>
+                                    <button type="submit" name="btnUpdate" class="button is-link">Mettre à jour</button>
                                 </div>
                                 <div class="control">
                                     <a href="dashboard.php" class="button is-text">Revenir au tableau de bord</a>

@@ -92,7 +92,7 @@ function getProposition($userId , $propositionId){
     $params = array("userId" => $userId, "propositionId" => $propositionId);
     $query->execute($params);
     $resultObject = $query->fetch(PDO::FETCH_OBJ);
-    return array($statusCode, $resultObject->title, $resultObject->contenu);
+    return array($statusCode, $resultObject);
 }
 
 function getUserPropositions($userId){
@@ -132,6 +132,26 @@ function updateProposition($userId, $propositionId, $title, $contenu){
     return $query->rowCount();
 }
 
+function submitPropositionToVote($userId, $propositionId){
+    $resultsArray = ["success" => 0, "invalidUserId" => -1, "invalidPropositionId" => -2, "sqlError" => -3];
+    if(invalidId($userId)){
+        return $resultsArray["invalidUserId"];
+    }
+    if(invalidId($propositionId)){
+        return $resultsArray["invalidPropositionId"];
+    }
+
+    global $db;
+    $query = $db->prepare("UPDATE proposition SET `date_valid` = :dateValid WHERE id_prop = :propositionId AND id_user = :userId");
+    $params = array("dateValid" => date("Y-m-d"), "userId" => $userId, "propositionId" => $propositionId);
+    $query->execute($params);
+
+    if($query->rowCount() == 1){
+        return $resultsArray["success"];
+    }else{
+        return $resultsArray["sqlError"];
+    }
+}
 /**************** UTILITY FUNCTIONS *************************/
 function invalidId($userId){
     return (empty($userId) || $userId < 1);
