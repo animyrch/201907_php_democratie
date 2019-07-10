@@ -1,11 +1,7 @@
 <?php
 require_once __DIR__."/db-connect.inc.php";
 
-function debug($elem){
-    echo "<pre>";
-    var_dump($elem);
-    echo "</pre>";
-}
+
 
 /**************** USER CRUD *************************/
 function checkUser($username, $mdp){
@@ -169,6 +165,12 @@ function getVotedStatusForPropositionByUser($userId, $propositionId){
 }
 
 /**************** UTILITY FUNCTIONS *************************/
+function debug($elem){
+    echo "<pre>";
+    var_dump($elem);
+    echo "</pre>";
+}
+
 function invalidId($userId){
     return (empty($userId) || $userId < 1);
     //TODO check if full digit
