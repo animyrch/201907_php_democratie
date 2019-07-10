@@ -100,7 +100,10 @@ function getUserPropositions($userId){
 }
 
 function getVotedPropositions(){
-    
+    global $db;
+    $query = $db->prepare("SELECT * FROM proposition WHERE `date_valid` IS NOT NULL");
+    $query->execute();
+    return $query->fetchAll(PDO::FETCH_OBJ);
 }
 
 function updateProposition($userId, $propositionId, $title, $contenu){
