@@ -19,7 +19,7 @@ if(!empty($_GET["action"])){
 }
 
 $userPropositions = getUserPropositions($userId);
-$votedPropositions = getVotedPropositions();
+$votedPropositions = getPropositionsSubmittedForVote();
 ?>
 
 <section>

@@ -358,7 +358,7 @@ if($resultUpdatePropositionDisabled === 1){
 //getting voted propositions from all user to further voting by users who have not voted yet
 $hasError = false;
 $noError = true;
-$propositionsAvailableForVoting = getVotedPropositions();
+$propositionsAvailableForVoting = getPropositionsSubmittedForVote();
 $votedPropositionContainer = array();
 if(!is_array($propositionsAvailableForVoting)){
     $errorContent = "voted propositions are not correctly gathered ";

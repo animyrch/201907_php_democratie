@@ -109,7 +109,7 @@ function getUserPropositions($userId){
     return $query->fetchAll(PDO::FETCH_OBJ);
 }
 
-function getVotedPropositions(){
+function getPropositionsSubmittedForVote(){
     global $db;
     $query = $db->prepare("SELECT * FROM proposition WHERE `date_valid` IS NOT NULL");
     $query->execute();
