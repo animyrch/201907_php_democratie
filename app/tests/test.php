@@ -453,8 +453,18 @@ if($result != 70){
     array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
 }
 
+//getting a pseudo by id
+$testPseudo = "FJZEHOf";
+$testMDp = "FZ2432";
+$newUserId = createUser($testPseudo, $testMDp);
 
+$verificationName = getPseudoById($newUserId);
 
+if($testPseudo != $verificationName){
+    $errorContent = "correct pseudo was not found";
+    $errorNo = 3918;
+    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+}
 
 
 /******************* testing user Crud END ********************/
