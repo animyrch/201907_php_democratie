@@ -45,13 +45,22 @@ function createProposition($title, $content, $userId){
         return throwError("invalidUserId");
     }
 
-    
     global $db;
 
-    $query = $db->prepare('INSERT INTO proposition (`id_user`, `title`, `contenu`, `nbPour`, `nbContre`, `date_valid`, `date_create`) VALUES (:userId, :title, :contenu, 1, 0, NULL, :today);');
-    $params = array('userId' => $userId, 'title' => $title, 'contenu' => $content, 'today' => date("Y-m-d"));
+    $query = $db->prepare('INSERT INTO proposition (`id_user`, `title`, `contenu`, `nbPour`, `nbContre`, `date_valid`) VALUES (:userId, :title, :contenu, 1, 0, NULL);');
+    $params = array('userId' => $userId, 'title' => $title, 'contenu' => $content);
     $query->execute($params);
-    return (integer) $db->lastInsertId();
+
+    $propositionId = (integer) $db->lastInsertId();
+
+    if(!invalidId($propositionId)){
+        $query = $db->prepare('INSERT INTO voter (`id_user`, `id_prop`) VALUES (:userId, :propositionId);');
+        $params = array('userId' => $userId, 'propositionId' => $propositionId);
+        $query->execute($params);
+    }
+
+
+    return $propositionId;
 }
 
 function deleteProposition($userId, $propositionId){
@@ -62,7 +71,8 @@ function deleteProposition($userId, $propositionId){
     if(invalidId($propositionId)){
         return throwError("invalidPropositionId");
     }
-
+    // debug($userId);
+    // debug($propositionId);
     global $db;
     $query = $db->prepare("DELETE FROM proposition WHERE `id_user` = :userId AND `id_prop` = :propositionId LIMIT 1");
     $params = array("userId" => $userId, "propositionId" => $propositionId);
