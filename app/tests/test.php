@@ -353,6 +353,36 @@ if($resultUpdatePropositionDisabled === 1){
     $errorNo = 2312;
     array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
 }
+
+//getting voted propositions from all user to further voting by users who have not voted yet
+$hasError = false;
+$noError = true;
+$propositionsAvailableForVoting = getVotedPropositions();
+$votedPropositionContainer = array();
+if(!is_array($propositionsAvailableForVoting)){
+    $errorContent = "voted propositions are not correctly gathered ";
+    $errorNo = 6374;
+    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+}else{
+    $votedPropositionContainer = $propositionsAvailableForVoting;
+}
+
+foreach($votedPropositionContainer as $votedProposition){
+    // var_dump($votedProposition);
+    if(property_exists($votedProposition, "date_valid")){
+        $noError *= $votedProposition->date_valid != "";
+    }else{
+        $hasError = true;
+    }
+}
+
+if($hasError || !$noError){
+    $errorContent = "propositions not submitted to vote or malformed propositions were also gathered";
+    $errorNo = 4864;
+    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+}
+
+
 /******************* testing proposition Crud END ********************/
 
 
