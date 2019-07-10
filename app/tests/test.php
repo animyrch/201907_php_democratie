@@ -429,6 +429,45 @@ if($resultGetVotedStatusForOtherUser){
     $errorNo = 3843;
     array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
 }
+
+
+//voting for someone else's proposition - voteForProposition()
+$testTitleVoted = "Test Title-VotebyOther";
+$testContentVoted = "Test content for the testing vote for other user's propositions";
+$testUser = 3; //for User 3
+
+//creating proposition with user 3
+$testPropositionId = createProposition($testTitleVoted, $testContentVoted, $testUser);
+
+//checking that user 1 hasn't voted for it yet
+if(getVotedStatusForPropositionByUser(1, $testPropositionId)){
+    $errorContent = "unwanted vote found";
+    $errorNo = 7391;
+    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+}
+
+//getting the number of nbPour for that proposition
+$nbPourAmountOld = getProposition($testUser, $testPropositionId)->nbPour;
+
+//voting for that proposition with user 1
+voteForProposition(1, $testPropositionId);
+
+//checking that user1 has voted for it
+if(!getVotedStatusForPropositionByUser(1, $testPropositionId)){
+    $errorContent = "searched vote was not found";
+    $errorNo = 3562;
+    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+}
+
+//checking that that proposition's nbPour number increase by 1
+$nbPourAmountNew = getProposition($testUser, $testPropositionId)->nbPour;
+
+if($nbPourAmountOld != ($nbPourAmountNew-1)){
+    $errorContent = "votedFor counter is not increased for the proposition that was voted for";
+    $errorNo = 8782;
+    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+}
+
 /******************* testing voting Crud END ********************/
 
 
