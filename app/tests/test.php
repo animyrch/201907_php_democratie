@@ -467,7 +467,14 @@ if($nbPourAmountOld != ($nbPourAmountNew-1)){
     $errorNo = 8782;
     array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
 }
-
+//checking that user1 can't vote for or against that proposition anymore
+voteForProposition(1, $testPropositionId);
+$nbPourAmountNew2 = getProposition($testUser, $testPropositionId)->nbPour;
+if($nbPourAmountNew == ($nbPourAmountNew2-1)){
+    $errorContent = "votedFor counter is increased again even though user had already voted for it";
+    $errorNo = 4562;
+    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+}
 
 //voting against someone else's proposition - voteAgainstProposition()
 $testTitleVoted = "Test Title-VoteAgainstOther";
@@ -501,8 +508,17 @@ if(!getVotedStatusForPropositionByUser(3, $testPropositionId)){
 $nbAgainstAmountNew = getProposition($testUser, $testPropositionId)->nbContre;
 
 if($nbAgainstAmountOld != ($nbAgainstAmountNew-1)){
-    $errorContent = "votedAgainst counter is not increased for the proposition that was voted for";
+    $errorContent = "votedAgainst counter is not increased for the proposition that was voted against";
     $errorNo = 2989;
+    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+}
+
+//checking that user3 can't vote for or against that proposition anymore
+voteAgainstProposition(3, $testPropositionId);
+$nbAgainstAmountNew2 = getProposition($testUser, $testPropositionId)->nbContre;
+if($nbAgainstAmountNew == ($nbAgainstAmountNew2-1)){
+    $errorContent = "votedAgainst counter is increased again even though user had already voted for it";
+    $errorNo = 4562;
     array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
 }
 /******************* testing voting Crud END ********************/
