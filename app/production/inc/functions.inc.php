@@ -27,6 +27,39 @@ function checkUser($username, $mdp){
     }
 }
 
+function createUser($username, $mdp){
+    if(empty($username)){
+        return throwError("invalidUsername");
+    }
+    if(empty($mdp)){
+        return throwError("emptyPassword");
+    }
+
+    global $db;
+    
+    $query = $db->prepare('INSERT INTO user (pseudo, mdp) VALUES (:pseudo, :mdp)');
+    $params = array("pseudo" => $username, "mdp" => $mdp);
+    $query->execute($params);
+
+    return $db->lastInsertId();
+}
+
+function deleteUser($username, $mdp){
+    if(empty($username)){
+        return throwError("invalidUsername");
+    }
+    if(empty($mdp)){
+        return throwError("emptyPassword");
+    }
+
+    global $db;
+    $query = $db->prepare('DELETE FROM user WHERE pseudo = :pseudo AND mdp = :mdp LIMIT 1');
+    $params = array("pseudo" => $username, "mdp" => $mdp);
+    $query->execute($params);
+    
+    return $query->rowCount();
+}
+
 function getUserNameById(){
     return 1;
 }
