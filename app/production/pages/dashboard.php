@@ -97,11 +97,11 @@ $votedPropositions = getPropositionsSubmittedForVote();
             </thead>
             <tbody>
                 <?php foreach($votedPropositions as $votedProposition){ 
-                    $proposer = getUserNameById($votedProposition->id_user);
-                    $userVotedForThisProposition = getVotedStatusForPropositionByUser($votedProposition->id_user, $votedProposition->id_prop); ?>
+                    $proposer = getUserById($votedProposition->id_user);
+                    $userVotedForThisProposition = getVotedStatusForPropositionByUser($userId, $votedProposition->id_prop); ?>
                     <tr>
                         <th><?=$votedProposition->id_prop?></th>
-                        <td><?=$proposer?></td>
+                        <td><?=$proposer->pseudo?></td>
                         <td><?=$votedProposition->title?></td>
                         <td><?=($userVotedForThisProposition ? "oui" : "non")?></td>
                         <td><?=$votedProposition->nbPour?></td>

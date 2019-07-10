@@ -406,6 +406,7 @@ submitPropositionToVote($testUser, $testPropositionIdVoted);
 $resultGetVotedStatusWithIncorrectUserid = getVotedStatusForPropositionByUser(-2, $testPropositionIdVoted);
 $resultGetVotedStatusWithIncorrectPropositionid = getVotedStatusForPropositionByUser($testUser, null);
 $resultGetVotedStatus = getVotedStatusForPropositionByUser($testUser, $testPropositionIdVoted);
+$resultGetVotedStatusForOtherUser = getVotedStatusForPropositionByUser(1, $testPropositionIdVoted);
 // var_dump($resultGetVotedStatusForVoted);
 
 if($resultGetVotedStatusWithIncorrectUserid != 50){
@@ -420,6 +421,12 @@ if($resultGetVotedStatusWithIncorrectPropositionid != 30){
 }
 if(!$resultGetVotedStatus){
     $errorContent = "voted proposition is indicated as unvoted";
+    $errorNo = 3843;
+    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+}
+// debug(getVotedStatusForPropositionByUser(100, $testPropositionIdVoted));
+if($resultGetVotedStatusForOtherUser){
+    $errorContent = "unvoted proposition is indicated as voted";
     $errorNo = 3843;
     array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
 }
@@ -458,14 +465,14 @@ $testPseudo = "FJZEHOf";
 $testMDp = "FZ2432";
 $newUserId = createUser($testPseudo, $testMDp);
 
-$verificationName = getPseudoById($newUserId);
+$userInfo = getUserById($newUserId);
 
-if($testPseudo != $verificationName){
+if($testPseudo != $userInfo->pseudo){
     $errorContent = "correct pseudo was not found";
     $errorNo = 3918;
     array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
 }
-
+deleteUser($testPseudo, $testMDp);
 
 /******************* testing user Crud END ********************/
 

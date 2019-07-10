@@ -40,7 +40,7 @@ function createUser($username, $mdp){
     $query = $db->prepare('INSERT INTO user (pseudo, mdp) VALUES (:pseudo, :mdp)');
     $params = array("pseudo" => $username, "mdp" => $mdp);
     $query->execute($params);
-
+    // debug($query->errorInfo());
     return $db->lastInsertId();
 }
 
@@ -60,8 +60,19 @@ function deleteUser($username, $mdp){
     return $query->rowCount();
 }
 
-function getUserNameById(){
-    return 1;
+function getUserById($userId){
+    // debug($userId);
+    if(invalidId($userId)){
+        return throwError("invalidUserId");
+    }
+
+    global $db;
+    $query = $db->prepare("SELECT * FROM user WHERE `id_user` = :userId");
+    $params = array("userId" => $userId);
+    $query->execute($params);
+    $userObject = $query->fetch(PDO::FETCH_OBJ);
+    return $userObject;
+
 }
 
 /**************** PROPOSITION CRUD *************************/
@@ -197,14 +208,14 @@ function getVotedStatusForPropositionByUser($userId, $propositionId){
     if(invalidId($propositionId)){
         return throwError("invalidPropositionId");
     }
-
     global $db;
     $query = $db->prepare("SELECT * FROM voter WHERE id_user = :userId AND id_prop = :propositionId LIMIT 1");
     $params = array("userId" => $userId, "propositionId" => $propositionId);
     $query->execute($params);
     $result = $query->fetch(PDO::FETCH_OBJ);
+    // debug($params);
     // var_dump($result);
-    return count($result) === 1;
+    return $result != false;
 }
 
 /**************** UTILITY FUNCTIONS *************************/
