@@ -10,3 +10,11 @@
 .container .table{
     width: 100%;
 }
+
+.voteContainer{
+    text-align: center;
+}
+
+.voteContainer  a{
+    min-width: 30%;
+}

@@ -16,6 +16,14 @@ if(!empty($_GET["action"])){
     if($action === "propositionUpdated"){
         $displayMsg = "Proposition modifiée";
     }
+    if($action === "voteFor" && isset($_GET["proposition"])){
+        voteForProposition($userId, $_GET["proposition"]);
+        $displayMsg = "Vous avez voté pour cette proposition";
+    }
+    if($action === "voteAgainst" && isset($_GET["proposition"])){
+        voteAgainstProposition($userId, $_GET["proposition"]);
+        $displayMsg = "Vous avez voté contre cette proposition";
+    }
 }
 
 $userPropositions = getUserPropositions($userId);
@@ -106,7 +114,10 @@ $votedPropositions = getPropositionsSubmittedForVote();
                         <td><?=($userVotedForThisProposition ? "déjà voté" : "")?></td>
                         <td><?=$votedProposition->nbPour?></td>
                         <td><?=$votedProposition->nbContre?></td>
-                        <td><a href="proposition_display.php?user=<?=$votedProposition->id_user?>&propositionId=<?=$votedProposition->id_prop?>" class="button is-link">Voir</a></td>
+                        <td>
+                            <a href="proposition_display.php?user=<?=$votedProposition->id_user?>&propositionId=<?=$votedProposition->id_prop?>&alreadyVoted=<?=$userVotedForThisProposition?>" 
+                            class="button is-link">Voir</a>
+                        </td>
                     </tr>
                 <?php } ?>
             </tbody>
