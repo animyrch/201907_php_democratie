@@ -68,7 +68,7 @@ $userPropositions = getUserPropositions($userId);
                     <?php if(!$propositionValidated){ ?>
                         <td><a href="proposition_modify.php?proposition=<?=$proposition->id_prop?>" class="button is-link">Modifier</a></td>
                     <?php }else{ ?>
-                        <td><a class="button is-link">Voir</a></td>
+                        <td><a href="proposition_modify.php?proposition=<?=$proposition->id_prop?>&disabled=1" class="button is-link">Voir</a></td>
                     <?php } ?>
                     <td><a href="?action=delete&proposition=<?=$proposition->id_prop?>" class="button is-danger">Supprimer</a></td>
 

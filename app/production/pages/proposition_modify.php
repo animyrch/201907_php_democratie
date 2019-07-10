@@ -5,6 +5,7 @@ require_once __DIR__."/../inc/header.inc.php";
 $messageErreur = "";
 $contenu = "";
 $title = "";
+$readOnly = !empty($_GET["disabled"]);
 
 //first access
 if($_SERVER["REQUEST_METHOD"] == "GET"){
@@ -66,16 +67,22 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                             <div class="field">
                                 <div class="control">
                                     <label for="title">Titre</label>
-                                    <input class="input" type="text" placeholder="Le titre de votre proposition" name="title" value="<?=$title?>" >
+                                    <input class="input" type="text" placeholder="Le titre de votre proposition" name="title" value="<?=$title?>" <?php if($readOnly) echo "disabled"; ?>>
                                 </div>
                             </div>
                             <div class="field">
                                 <div class="control">
                                     <label for="contenu">Contenu</label>
-                                    <textarea class="textarea" placeholder="Le contenu de votre proposition" name="contenu"><?=$contenu?></textarea>
+                                    <textarea class="textarea" placeholder="Le contenu de votre proposition" name="contenu" <?php if($readOnly) echo "disabled"; ?>><?=$contenu?></textarea>
                                 </div>
                             </div>
+
+                            <?php if($readOnly){ ?>
+                            <div class="notification is-primary">Cette proposition est déjà soumise au vote et ne peut plus être modifier.</div>
+                            <?php }else{ ?>
                             <div class="notification is-primary">Lorque vous soumettez une proposition au vote, il ne sera plus possible de la modifier.</div>
+                            <?php }?>
+
                             <div class="field">
                                 <p class="control">
                                     <p class="help is-danger">
@@ -86,10 +93,10 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                             <input name="propositionId" style="display : none" value="<?=$propositionId?>">
                             <div class="field is-grouped">
                                 <div class="control">
-                                    <button type="submit" name="btnValid" class="button is-dark">Soumettre au vote</button>
+                                    <button type="submit" name="btnValid" class="button is-dark" <?php if($readOnly) echo "disabled"; ?>>Soumettre au vote</button>
                                 </div>
                                 <div class="control">
-                                    <button type="submit" name="btnUpdate" class="button is-link">Mettre à jour</button>
+                                    <button type="submit" name="btnUpdate" class="button is-link" <?php if($readOnly) echo "disabled"; ?>>Mettre à jour</button>
                                 </div>
                                 <div class="control">
                                     <a href="dashboard.php" class="button is-text">Revenir au tableau de bord</a>
