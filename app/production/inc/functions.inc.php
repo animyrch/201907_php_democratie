@@ -31,6 +31,9 @@ function checkUser($username, $mdp){
     }
 }
 
+function getUserNameById(){
+    return 1;
+}
 
 /**************** PROPOSITION CRUD *************************/
 
@@ -46,6 +49,7 @@ function createProposition($title, $content, $userId){
         return throwError("invalidUserId");
     }
 
+    
     global $db;
 
     $query = $db->prepare('INSERT INTO proposition (`id_user`, `title`, `contenu`, `nbPour`, `nbContre`, `date_valid`, `date_create`) VALUES (:userId, :title, :contenu, 1, 0, NULL, :today);');
@@ -144,9 +148,30 @@ function submitPropositionToVote($userId, $propositionId){
 
     return $query->rowCount();
 }
+
+/**************** VOTING CRUD *************************/
+
+function getVotedStatusForPropositionByUser($userId, $propositionId){
+    if(invalidId($userId)){
+        return throwError("invalidUserId");
+    }
+    if(invalidId($propositionId)){
+        return throwError("invalidPropositionId");
+    }
+
+    global $db;
+    $query = $db->prepare("SELECT * FROM voter WHERE id_user = :userId AND id_prop = :propositionId LIMIT 1");
+    $params = array("userId" => $userId, "propositionId" => $propositionId);
+    $query->execute($params);
+    $result = $query->fetch(PDO::FETCH_OBJ);
+    // var_dump($result);
+    return count($result) === 1;
+}
+
 /**************** UTILITY FUNCTIONS *************************/
 function invalidId($userId){
     return (empty($userId) || $userId < 1);
+    //TODO check if full digit
 }
 
 function throwError($type){
