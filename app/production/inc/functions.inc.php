@@ -9,13 +9,12 @@ function debug($elem){
 
 /**************** USER CRUD *************************/
 function checkUser($username, $mdp){
-    $resultsArray = ["emptyUsername" => -1, "emptyPassword" => -2, "wrongUsernameOrPassword" => -3];
     
     if(empty($username)){
-        return $resultsArray["emptyUsername"];
+        return throwError("invalidUsername");
     }
     if(empty($mdp)){
-        return $resultsArray["emptyPassword"];
+        return throwError("emptyPassword");
     }
 
     global $db;
@@ -28,7 +27,7 @@ function checkUser($username, $mdp){
     if($user){
         return (integer) $user["id_user"];
     }else{
-        return $resultsArray["wrongUsernameOrPassword"];
+        return throwError("invalidUsernameOrPassword");
     }
 }
 
@@ -36,16 +35,15 @@ function checkUser($username, $mdp){
 /**************** PROPOSITION CRUD *************************/
 
 function createProposition($title, $content, $userId){
-    $resultsArray = ["emptyTitle" => -1, "emptyContent" => -2, "invalidUserId" => -3];
 
     if(empty($title)){
-        return $resultsArray["emptyTitle"];
+        return throwError("invalidPropositionTitle");
     }
     if(empty($content)){
-        return $resultsArray["emptyContent"];
+        return throwError("invalidPropositionContent");
     }
     if(invalidId($userId)){
-        return $resultsArray["invalidUserId"];
+        return throwError("invalidUserId");
     }
 
     global $db;
@@ -57,13 +55,12 @@ function createProposition($title, $content, $userId){
 }
 
 function deleteProposition($userId, $propositionId){
-    $resultsArray = ["invalidUserId" => -1, "invalidPropositionId" => -2];
     
     if(invalidId($userId)){
-        return $resultsArray["invalidUserId"];
+        return throwError("invalidUserId");
     }
     if(invalidId($propositionId)){
-        return $resultsArray["invalidPropositionId"];
+        return throwError("invalidPropositionId");
     }
 
     global $db;
@@ -74,32 +71,26 @@ function deleteProposition($userId, $propositionId){
 }
 
 function getProposition($userId , $propositionId){
-    $statusCode = 0;
-    $resultsArray = ["success" => 0, "invalidUserId" => -1, "invalidPropositionId" => -2];
     if(invalidId($userId)){
-        $statusCode =  $resultsArray["invalidUserId"];
+        return throwError("invalidUserId");
     }
     if(invalidId($propositionId)){
-        $statusCode = $resultsArray["invalidPropositionId"];
-    }
-    if($statusCode !== 0){
-        return array($statusCode, "", "");
+        return throwError("invalidPropositionId");
     }
     
-    $statusCode = $resultsArray["success"];
     global $db;
     $query = $db->prepare("SELECT * FROM proposition WHERE  `id_user` = :userId AND `id_prop` = :propositionId");
     $params = array("userId" => $userId, "propositionId" => $propositionId);
     $query->execute($params);
     $resultObject = $query->fetch(PDO::FETCH_OBJ);
-    return array($statusCode, $resultObject);
+
+    return $resultObject;
 }
 
 function getUserPropositions($userId){
-    $resultsArray = ["invalidUserId" => -1];
 
     if(invalidId($userId)){
-        return $resultsArray["invalidUserId"];
+        return throwError("invalidUserId");
     }
     global $db;
 
@@ -108,20 +99,23 @@ function getUserPropositions($userId){
     return $query->fetchAll(PDO::FETCH_OBJ);
 }
 
+function getVotedPropositions(){
+    
+}
+
 function updateProposition($userId, $propositionId, $title, $contenu){
-    $resultsArray = ["success" => 0, "emptyTitle" => -1, "emptyContent" => -2, "invalidUserId" => -3, "invalidPropositionId" => -4];
 
     if(empty($title)){
-        return $resultsArray["emptyTitle"];
+        return throwError("invalidPropositionTitle");
     }
     if(empty($contenu)){
-        return $resultsArray["emptyContent"];
+        return throwError("invalidPropositionContent");
     }
     if(invalidId($userId)){
-        return $resultsArray["invalidUserId"];
+        return throwError("invalidUserId");
     }
     if(invalidId($propositionId)){
-        return $resultsArray["invalidPropositionId"];
+        return throwError("invalidPropositionId");
     }
 
     global $db;
@@ -133,12 +127,11 @@ function updateProposition($userId, $propositionId, $title, $contenu){
 }
 
 function submitPropositionToVote($userId, $propositionId){
-    $resultsArray = ["success" => 0, "invalidUserId" => -1, "invalidPropositionId" => -2, "sqlError" => -3];
     if(invalidId($userId)){
-        return $resultsArray["invalidUserId"];
+        return throwError("invalidUserId");
     }
     if(invalidId($propositionId)){
-        return $resultsArray["invalidPropositionId"];
+        return throwError("invalidPropositionId");
     }
 
     global $db;
@@ -146,14 +139,30 @@ function submitPropositionToVote($userId, $propositionId){
     $params = array("dateValid" => date("Y-m-d"), "userId" => $userId, "propositionId" => $propositionId);
     $query->execute($params);
 
-    if($query->rowCount() == 1){
-        return $resultsArray["success"];
-    }else{
-        return $resultsArray["sqlError"];
-    }
+    return $query->rowCount();
 }
 /**************** UTILITY FUNCTIONS *************************/
 function invalidId($userId){
     return (empty($userId) || $userId < 1);
+}
+
+function throwError($type){
+
+    $resultsArray = [
+        "emptyPassword" => 10,
+        "invalidPropositionContent" => 20,
+        "invalidPropositionId" => 30,
+        "invalidPropositionTitle" => 40,
+        "invalidUserId" => 50,
+        "invalidUsername" => 60,
+        "invalidUsernameOrPassword" => 70,
+        "sqlError" => 80,
+    ];
+
+    foreach($resultsArray as $errorType => $errorCode){
+        if($errorType == $type){
+            return $errorCode;
+        }
+    }
 }
 ?>

@@ -17,9 +17,9 @@ if($_SERVER["REQUEST_METHOD"] == "GET"){
     if($messageErreur === ""){
         require_once __DIR__."/../inc/functions.inc.php";
         $proposition = getProposition($userId, $propositionId);
-        if($proposition[0] === 0){
-            $title = $proposition[1]->title;
-            $contenu = $proposition[1]->contenu;
+        if($proposition){
+            $title = $proposition->title;
+            $contenu = $proposition->contenu;
         }else{
             header("Location: dashboard.php?action=propositionUpdateFailed");
         }

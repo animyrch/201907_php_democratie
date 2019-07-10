@@ -10,17 +10,16 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         $mdp = $_POST["mdp"];
         $userCheckResult = checkUser($username, $mdp);
 
-        // $resultsArray = ["emptyUsername" => -1, "emptyPassword" => -2, "wrongUsernameOrPassword" => -3];
-        if($userCheckResult === -1){
+        if($userCheckResult === 60){
             header("Location: ../index.php?action=emptyUsername");
         }
-        if($userCheckResult === -2){
+        elseif($userCheckResult === 10){
             header("Location: ../index.php?action=emptyPassword");
         }
-        if($userCheckResult === -3){
+        elseif($userCheckResult === 70){
             header("Location: ../index.php?action=wrongInfo&username=$username");
         }
-        if($userCheckResult > 0){
+        else{
             $_SESSION["userId"] = $userCheckResult;
             $_SESSION["connected"] = true;
             header("Location: ./dashboard.php");
