@@ -125,7 +125,7 @@ function updateProposition($userId, $propositionId, $title, $contenu){
     }
 
     global $db;
-    $query = $db->prepare("UPDATE proposition SET `title` = :title, `contenu` = :contenu WHERE `id_user` = :userId AND `id_prop` = :propositionId;");
+    $query = $db->prepare("UPDATE proposition SET `title` = :title, `contenu` = :contenu WHERE `id_user` = :userId AND `id_prop` = :propositionId AND `date_valid` IS NULL;");
     
     $params = array("userId" => $userId, "propositionId" => $propositionId, "title" => $title, "contenu" => $contenu);
     $query->execute($params);

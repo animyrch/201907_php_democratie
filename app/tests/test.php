@@ -400,6 +400,17 @@ if($newPropositionContents[1]->date_valid === ""){
     $errorNo = 5345;
     array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));    
 }
+
+//checking that a proposition can no longer be edited after submission to vote but it can still be deleted
+$newTestTitle = "new test title";
+$newTestContent = "new test content for chcking that update is disabled after submission to vote";
+$resultUpdatePropositionDisabled = updateProposition($testUser, $testPropositionId, $newTestTitle, $newTestContent);
+
+if($resultUpdatePropositionDisabled === 1){
+    $errorContent = "the proposition already submitted to vote is incorrectly updated";
+    $errorNo = 2312;
+    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+}
 /******************* testing proposition Crud END ********************/
 
 
