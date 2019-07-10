@@ -116,7 +116,6 @@ if($resultCreateCorrectProposition < 1){
     array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
 }
 
-//TODO - this should also generate a line in the table VOTER. 
 
 
 //Reading propositions of a user

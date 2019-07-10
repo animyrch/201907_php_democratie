@@ -106,7 +106,7 @@ $votedPropositions = getPropositionsSubmittedForVote();
                         <td><?=($userVotedForThisProposition ? "oui" : "non")?></td>
                         <td><?=$votedProposition->nbPour?></td>
                         <td><?=$votedProposition->nbContre?></td>
-                        <td><a href="proposition_modify.php?proposition=<?=$votedProposition->id_prop?>&disabled=1" class="button is-link">Voir</a></td>
+                        <td><a href="proposition_display.php?user=<?=$votedProposition->id_user?>&propositionId=<?=$votedProposition->id_prop?>" class="button is-link">Voir</a></td>
                     </tr>
                 <?php } ?>
             </tbody>

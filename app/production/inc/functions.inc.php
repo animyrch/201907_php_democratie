@@ -125,13 +125,13 @@ function deleteProposition($userId, $propositionId){
 }
 
 function getProposition($userId , $propositionId){
+    // debug($propositionId);
     if(invalidId($userId)){
         return throwError("invalidUserId");
     }
     if(invalidId($propositionId)){
         return throwError("invalidPropositionId");
     }
-    
     global $db;
     $query = $db->prepare("SELECT * FROM proposition WHERE  `id_user` = :userId AND `id_prop` = :propositionId");
     $params = array("userId" => $userId, "propositionId" => $propositionId);
