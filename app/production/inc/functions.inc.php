@@ -188,11 +188,7 @@ function throwError($type){
         "invalidUsernameOrPassword" => 70,
         "sqlError" => 80,
     ];
-
-    foreach($resultsArray as $errorType => $errorCode){
-        if($errorType == $type){
-            return $errorCode;
-        }
-    }
+    return $resultsArray[$type];
+    
 }
 ?>
