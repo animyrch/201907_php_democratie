@@ -390,6 +390,54 @@ if($hasError || !$noError){
 
 
 
+/******************* testing voting Crud START ********************/
+
+//getting the voted status for a given proposition by a given user
+
+$testTitleVoted = "Test Title for getting voted status - to be voted";
+$testTitleUnVoted = "Test Title for getting voted status - not to be voted";
+$testContentVoted = "Test content for the testing getting voted status for a given proposition by a given user - User 2. To be voted";
+$testContentUnVoted = "Test content for the testing getting voted status for a given proposition by a given user - User 2. Not to be voted";
+$testUser = 2; //for User 2
+$testPropositionIdVoted = createProposition($testTitleVoted, $testContentVoted, $testUser);
+$testPropositionIdUnVoted = createProposition($testTitleUnVoted, $testContentUnVoted, $testUser);
+submitPropositionToVote($testUser, $testPropositionIdVoted);
+
+$resultGetVotedStatusWithIncorrectUserid = getVotedStatusForPropositionByUser(-2, $testPropositionIdUnVoted);
+$resultGetVotedStatusWithIncorrectPropositionid = getVotedStatusForPropositionByUser($testUser, null);
+$resultGetVotedStatusForUnvoted = getVotedStatusForPropositionByUser($testUser, $testPropositionIdUnVoted);
+$resultGetVotedStatusForVoted = getVotedStatusForPropositionByUser($testUser, $testPropositionIdVoted);
+
+if($resultGetVotedStatusWithIncorrectUserid != 50){
+    $errorContent = "empty user id error is not detected during getting voted status";
+    $errorNo = 4752;
+    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+}
+if($resultGetVotedStatusWithIncorrectPropositionid != 30){
+    $errorContent = "empty proposition id error is not detected during getting voted status";
+    $errorNo = 8536;
+    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+}
+if($resultGetVotedStatusForUnvoted){
+    $errorContent = "unvoted proposition is indicated as voted";
+    $errorNo = 8474;
+    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+}
+if(!$resultGetVotedStatusForVoted){
+    $errorContent = "voted proposition is indicated as unvoted";
+    $errorNo = 3843;
+    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+}
+/******************* testing voting Crud END ********************/
+
+
+
+
+
+
+
+
+
 
 
 
