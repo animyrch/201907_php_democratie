@@ -19,6 +19,7 @@ if(!empty($_GET["action"])){
 }
 
 $userPropositions = getUserPropositions($userId);
+$votedPropositions = getVotedPropositions();
 ?>
 
 <section>
@@ -95,33 +96,19 @@ $userPropositions = getUserPropositions($userId);
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <th>43</th>
-                    <td>TEST</td>
-                    <td>test titre</td>
-                    <td>oui</td>
-                    <td>2</td>
-                    <td>3</td>
-                    <td><a class="button is-link">Voir</a></td>
-                </tr>
-                <tr>
-                    <th>43</th>
-                    <td>TEST</td>
-                    <td>test titre</td>
-                    <td>oui</td>
-                    <td>2</td>
-                    <td>3</td>
-                    <td><a class="button is-link">Voir</a></td>
-                </tr>
-                <tr>
-                    <th>43</th>
-                    <td>TEST</td>
-                    <td>test titre</td>
-                    <td>oui</td>
-                    <td>2</td>
-                    <td>3</td>
-                    <td><a class="button is-link">Voir</a></td>
-                </tr>
+                <?php foreach($votedPropositions as $votedProposition){ 
+                    $proposer = getUserNameById($votedProposition->id_user);
+                    $userVotedForThisProposition = getVotedStatusForPropositionByUser($votedProposition->id_user, $votedProposition->id_prop); ?>
+                    <tr>
+                        <th><?=$votedProposition->id_prop?></th>
+                        <td><?=$proposer?></td>
+                        <td><?=$votedProposition->title?></td>
+                        <td><?=($userVotedForThisProposition ? "oui" : "non")?></td>
+                        <td><?=$votedProposition->nbPour?></td>
+                        <td><?=$votedProposition->nbContre?></td>
+                        <td><a href="proposition_modify.php?proposition=<?=$votedProposition->id_prop?>&disabled=1" class="button is-link">Voir</a></td>
+                    </tr>
+                <?php } ?>
             </tbody>
         </table>
     </div>

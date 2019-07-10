@@ -59,7 +59,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 <section>
     <div class="container">
         <form method="POST">
-            <h1 class="title is-1">Détails de votre proposition</h1>
+            <h1 class="title is-1">Détails de la proposition</h1>
             <div class="box">
                 <article class="media">
                     <div class="media-content">
