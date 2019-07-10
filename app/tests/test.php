@@ -441,7 +441,7 @@ $testPropositionId = createProposition($testTitleVoted, $testContentVoted, $test
 
 //checking that user 1 hasn't voted for it yet
 if(getVotedStatusForPropositionByUser(1, $testPropositionId)){
-    $errorContent = "unwanted vote found";
+    $errorContent = "unwanted for vote found";
     $errorNo = 7391;
     array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
 }
@@ -454,7 +454,7 @@ voteForProposition(1, $testPropositionId);
 
 //checking that user1 has voted for it
 if(!getVotedStatusForPropositionByUser(1, $testPropositionId)){
-    $errorContent = "searched vote was not found";
+    $errorContent = "searched for vote was not found";
     $errorNo = 3562;
     array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
 }
@@ -468,6 +468,43 @@ if($nbPourAmountOld != ($nbPourAmountNew-1)){
     array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
 }
 
+
+//voting against someone else's proposition - voteAgainstProposition()
+$testTitleVoted = "Test Title-VoteAgainstOther";
+$testContentVoted = "Test content for the testing vote against other user's propositions";
+$testUser = 2; //for User 2
+
+//creating proposition with user 2
+$testPropositionId = createProposition($testTitleVoted, $testContentVoted, $testUser);
+
+//checking that user 3 hasn't voted for it yet
+if(getVotedStatusForPropositionByUser(3, $testPropositionId)){
+    $errorContent = "unwanted against vote found";
+    $errorNo = 5414;
+    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+}
+
+//getting the number of nbContre for that proposition
+$nbAgainstAmountOld = getProposition($testUser, $testPropositionId)->nbContre;
+
+//voting against that proposition with user 3
+voteAgainstProposition(3, $testPropositionId);
+
+//checking that user3 has voted against it
+if(!getVotedStatusForPropositionByUser(3, $testPropositionId)){
+    $errorContent = "searched against vote was not found";
+    $errorNo = 1987;
+    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+}
+
+//checking that that proposition's nbContre number increase by 1
+$nbAgainstAmountNew = getProposition($testUser, $testPropositionId)->nbContre;
+
+if($nbAgainstAmountOld != ($nbAgainstAmountNew-1)){
+    $errorContent = "votedAgainst counter is not increased for the proposition that was voted for";
+    $errorNo = 2989;
+    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+}
 /******************* testing voting Crud END ********************/
 
 
