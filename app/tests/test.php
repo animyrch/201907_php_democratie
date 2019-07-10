@@ -394,19 +394,21 @@ if($hasError || !$noError){
 
 //getting the voted status for a given proposition by a given user
 
-$testTitleVoted = "Test Title for getting voted status - to be voted";
-$testTitleUnVoted = "Test Title for getting voted status - not to be voted";
+$testTitleVoted = "Test Title  - to be voted";
+$testTitleUnVoted = "Test Title - not to be voted";
 $testContentVoted = "Test content for the testing getting voted status for a given proposition by a given user - User 2. To be voted";
 $testContentUnVoted = "Test content for the testing getting voted status for a given proposition by a given user - User 2. Not to be voted";
 $testUser = 2; //for User 2
 $testPropositionIdVoted = createProposition($testTitleVoted, $testContentVoted, $testUser);
 $testPropositionIdUnVoted = createProposition($testTitleUnVoted, $testContentUnVoted, $testUser);
+// var_dump($testTitleVoted, $testContentVoted, $testUser);
 submitPropositionToVote($testUser, $testPropositionIdVoted);
 
 $resultGetVotedStatusWithIncorrectUserid = getVotedStatusForPropositionByUser(-2, $testPropositionIdUnVoted);
 $resultGetVotedStatusWithIncorrectPropositionid = getVotedStatusForPropositionByUser($testUser, null);
 $resultGetVotedStatusForUnvoted = getVotedStatusForPropositionByUser($testUser, $testPropositionIdUnVoted);
 $resultGetVotedStatusForVoted = getVotedStatusForPropositionByUser($testUser, $testPropositionIdVoted);
+// var_dump($resultGetVotedStatusForVoted);
 
 if($resultGetVotedStatusWithIncorrectUserid != 50){
     $errorContent = "empty user id error is not detected during getting voted status";
