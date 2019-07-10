@@ -429,6 +429,40 @@ if(!$resultGetVotedStatus){
 
 
 
+/******************* testing user Crud START ********************/
+//user creation
+$testPseudo = "newPseudo";
+$testMDp = "FZEJ232";
+
+$newUserId = createUser($testPseudo, $testMDp);
+$verificationId = checkUser($testPseudo, $testMDp);
+
+if($newUserId != $verificationId){
+    $errorContent = "user was not created correctly";
+    $errorNo = 2870;
+    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+}
+
+//user deletion
+deleteUser($testPseudo, $testMDp);
+$result = checkUser($testPseudo, $testMDp);
+
+if($result != 70){
+    $errorContent = "user was not deleted correctly";
+    $errorNo = 2898;
+    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+}
+
+
+
+
+
+/******************* testing user Crud END ********************/
+
+
+
+
+
 
 
 
