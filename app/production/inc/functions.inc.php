@@ -237,6 +237,26 @@ function voteForProposition($userId, $propositionId){
     
     return $rowCount;
 }
+
+function voteAgainstProposition($userId, $propositionId){
+    if(invalidId($userId)){
+        return throwError("invalidUserId");
+    }
+    if(invalidId($propositionId)){
+        return throwError("invalidPropositionId");
+    }
+    global $db;
+    $query = $db->prepare("INSERT INTO voter (id_user, id_prop) VALUES (:userId, :propositionId);");
+    $params = array("userId" => $userId, "propositionId" => $propositionId);
+    $query->execute($params);
+    $rowCount = $query->rowCount();
+
+    $query = $db->prepare("UPDATE proposition SET nbContre = nbContre+1;");
+    $query->execute();
+    $rowCount *= $query->rowCount();
+    
+    return $rowCount;
+}
 /**************** UTILITY FUNCTIONS *************************/
 function debug($elem){
     echo "<pre>";
