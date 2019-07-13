@@ -226,16 +226,24 @@ function voteForProposition($userId, $propositionId){
         return throwError("invalidPropositionId");
     }
     global $db;
-    $query = $db->prepare("INSERT INTO voter (id_user, id_prop) VALUES (:userId, :propositionId);");
-    $params = array("userId" => $userId, "propositionId" => $propositionId);
-    $query->execute($params);
-    $rowCount = $query->rowCount();
-
-    $query = $db->prepare("UPDATE proposition SET nbPour = nbPour+1;");
-    $query->execute();
-    $rowCount *= $query->rowCount();
     
-    return $rowCount;
+    //first checking if the user has already voted
+    $repeatVote = isRepeatVote($userId, $propositionId);
+    //if the user hasn't already voted for that proposition
+    if(!$repeatVote){
+        $query = $db->prepare("INSERT INTO voter (id_user, id_prop) VALUES (:userId, :propositionId);");
+        $params = array("userId" => $userId, "propositionId" => $propositionId);
+        $query->execute($params);
+        $rowCount = $query->rowCount();
+    
+        $query = $db->prepare("UPDATE proposition SET nbPour = nbPour+1;");
+        $query->execute();
+        $rowCount *= $query->rowCount();
+        
+        return $rowCount;
+    }
+    
+    return $repeatVote;    
 }
 
 function voteAgainstProposition($userId, $propositionId){
@@ -246,16 +254,40 @@ function voteAgainstProposition($userId, $propositionId){
         return throwError("invalidPropositionId");
     }
     global $db;
-    $query = $db->prepare("INSERT INTO voter (id_user, id_prop) VALUES (:userId, :propositionId);");
-    $params = array("userId" => $userId, "propositionId" => $propositionId);
-    $query->execute($params);
-    $rowCount = $query->rowCount();
 
-    $query = $db->prepare("UPDATE proposition SET nbContre = nbContre+1;");
-    $query->execute();
-    $rowCount *= $query->rowCount();
-    
-    return $rowCount;
+    //first checking if the user has already voted
+    $repeatVote = isRepeatVote($userId, $propositionId);
+    if(!$repeatVote){
+
+        $query = $db->prepare("INSERT INTO voter (id_user, id_prop) VALUES (:userId, :propositionId);");
+        $params = array("userId" => $userId, "propositionId" => $propositionId);
+        $query->execute($params);
+        $rowCount = $query->rowCount();
+
+        $query = $db->prepare("UPDATE proposition SET nbContre = nbContre+1;");
+        $query->execute();
+        $rowCount *= $query->rowCount();
+        
+        return $rowCount;
+    }
+
+    return $repeatVote;
+}
+
+function isRepeatVote($userId, $propositionId){
+    if(invalidId($userId)){
+        return throwError("invalidUserId");
+    }
+    if(invalidId($propositionId)){
+        return throwError("invalidPropositionId");
+    }
+
+    global $db;
+
+    $query = $db->prepare("SELECT * FROM voter where id_user = :userId AND id_prop = :propositionId;");
+    $params = array("userId" => (string) $userId, "propositionId" => $propositionId);
+    $query->execute($params);
+    return $query->fetch(PDO::FETCH_OBJ);  
 }
 /**************** UTILITY FUNCTIONS *************************/
 function debug($elem){
