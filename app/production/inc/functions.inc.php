@@ -289,6 +289,9 @@ function isRepeatVote($userId, $propositionId){
     $query->execute($params);
     return $query->fetch(PDO::FETCH_OBJ);  
 }
+
+
+
 /**************** UTILITY FUNCTIONS *************************/
 function debug($elem){
     echo "<pre>";
@@ -304,14 +307,16 @@ function invalidId($userId){
 function throwError($type){
 
     $resultsArray = [
-        "emptyPassword" => 10,
-        "invalidPropositionContent" => 20,
-        "invalidPropositionId" => 30,
-        "invalidPropositionTitle" => 40,
-        "invalidUserId" => 50,
-        "invalidUsername" => 60,
-        "invalidUsernameOrPassword" => 70,
-        "sqlError" => 80,
+        "emptyPassword" => -10,
+        "invalidCommentContent" => -15,
+        "invalidCommentId" => -18,
+        "invalidPropositionContent" => -20,
+        "invalidPropositionId" => -30,
+        "invalidPropositionTitle" => -40,
+        "invalidUserId" => -50,
+        "invalidUsername" => -60,
+        "invalidUsernameOrPassword" => -70,
+        "sqlError" => -80,
     ];
     return $resultsArray[$type];
     
