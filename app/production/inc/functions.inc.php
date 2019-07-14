@@ -292,6 +292,64 @@ function isRepeatVote($userId, $propositionId){
 
 
 
+/**************** COMMENTS CRUD *************************/
+
+function getComments($propositionId){
+    if(invalidId($propositionId)){
+        return throwError("invalidPropositionId");
+    }
+
+    $commentObject = [];
+    global $db;
+
+    $query = $db->prepare('SELECT * FROM commenter WHERE `id_prop` = :propositionId');
+    $query->execute(array('propositionId'=>$propositionId));
+    $commentObject = $query->fetchAll(PDO::FETCH_OBJ);
+
+    return $commentObject;
+}
+
+function createComment($userId, $propositionId, $comment){
+    if(invalidId($userId)){
+        return throwError("invalidUserId");
+    }
+    if(invalidId($propositionId)){
+        return throwError("invalidPropositionId");
+    }
+    if(empty($comment)){
+        return throwError("invalidCommentContent");
+    }
+    $lastInsertID = "";
+    global $db;
+
+    $query = $db->prepare('INSERT INTO commenter (id_user, id_prop, comment) VALUES (:userId, :propositionId, :comment)');
+    $params = array("userId" => $userId, "propositionId" => $propositionId, "comment" => $comment);
+    $query->execute($params);
+    $lastInsertID = $db->lastInsertId();
+
+    return $lastInsertID;
+}
+
+function deleteComment($userId, $commentId){
+    if(invalidId($userId)){
+        return throwError("invalidUserId");
+    }
+    if(invalidId($commentId)){
+        return throwError("invalidCommentId");
+    }
+
+    $rowCount = "";
+    global $db;
+    $query = $db->prepare('DELETE FROM commenter WHERE `id_user` = :userId AND `id_comment` = :commentId LIMIT 1');
+    $params = array("userId" => $userId, "commentId" => $commentId);
+    $query->execute($params);
+    
+    $rowCount = $query->rowCount();
+    return $rowCount;
+}
+
+
+
 /**************** UTILITY FUNCTIONS *************************/
 function debug($elem){
     echo "<pre>";

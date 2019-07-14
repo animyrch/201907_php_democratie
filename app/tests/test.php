@@ -621,10 +621,10 @@ $testCommentContentUser1 = "This is a comment from User 3 for testing comment ga
 $testCommentContentUser2 = "This is a comment from User 2 for testing comment gathering system";
 $commentFromUser1 = createComment($commentUser1, $testPropId, $testCommentContentUser1);
 $commentFromUser2 = createComment($commentUser2, $testPropId, $testCommentContentUser2);
+// debug($commentFromUser1);
 
 $commentObjectsArrayIncorrectProp = getComments(null);
 $commentObjectsArray = getComments($testPropId);
-
 if($commentObjectsArrayIncorrectProp !== -30){
     $errorContent = "incorrect proposition id is not detected during comment gathering";
     $errorNo = 9893;
@@ -633,7 +633,7 @@ if($commentObjectsArrayIncorrectProp !== -30){
 
 $commentMatch = false;
 foreach($commentObjectsArray as $key => $comment){
-    if($proposition->id_comment === $commentFromUser1){
+    if($comment->id_comment == $commentFromUser1){
         $commentMatch = true;
     }
 }
@@ -644,7 +644,7 @@ if(!$commentMatch){
 }
 $commentMatch = false;
 foreach($commentObjectsArray as $key => $comment){
-    if($proposition->id_comment === $commentFromUser2){
+    if($comment->id_comment === $commentFromUser2){
         $commentMatch = true;
     }
 }
@@ -724,7 +724,7 @@ if($result === 1){
 $commentObjectsArray = getComments($testPropId);
 $commentMatch = false;
 foreach($commentObjectsArray as $key => $comment){
-    if($proposition->id_comment === $testCommentId){
+    if($comment->id_comment === $testCommentId){
         $commentMatch = true;
     }
 }
