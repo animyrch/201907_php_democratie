@@ -574,7 +574,7 @@ deleteUser($testPseudo, $testMDp);
 
 /******************* testing comment Crud START ********************/
 
-//testing CURD creation
+//testing comment creation
 $propTitleForComment = "Test Title-forComment";
 $propContentForComment = "Test content for the testing commenting system";
 $testUser = 1; //for User 1
@@ -603,15 +603,56 @@ if($testCommentIdIncorrectComment !== -15){
     array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
 }
 
+//correct use
 if(invalidId($testCommentId)){
     $errorContent = "comment was not created";
     $errorNo = 8983;
     array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
 }
 
+//testing getting comments for a proposition
+$propTitleForComment = "Test Title-forComment";
+$propContentForComment = "Test content for the testing gathering all comments for a given proposition";
+$creatingUser = 3; //for User 3
+$testPropId = createProposition($propTitleForComment, $propContentForComment, $creatingUser);
+$commentUser1 = 3;
+$commentUser2 = 2;
+$testCommentContentUser1 = "This is a comment from User 3 for testing comment gathering system and its their own proposition";
+$testCommentContentUser2 = "This is a comment from User 2 for testing comment gathering system";
+$commentFromUser1 = createComment($commentUser1, $testPropId, $testCommentContentUser1);
+$commentFromUser2 = createComment($commentUser2, $testPropId, $testCommentContentUser2);
 
+$commentObjectsArrayIncorrectProp = getComments(null);
+$commentObjectsArray = getComments($testPropId);
 
+if($commentObjectsArrayIncorrectProp !== -30){
+    $errorContent = "incorrect proposition id is not detected during comment gathering";
+    $errorNo = 9893;
+    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+}
 
+$commentMatch = false;
+foreach($commentObjectsArray as $key => $comment){
+    if($proposition->id_comment === $commentFromUser1){
+        $commentMatch = true;
+    }
+}
+if(!$commentMatch){
+    $errorContent = "comment of the first user was not found";
+    $errorNo = 8298;
+    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+}
+$commentMatch = false;
+foreach($commentObjectsArray as $key => $comment){
+    if($proposition->id_comment === $commentFromUser2){
+        $commentMatch = true;
+    }
+}
+if(!$commentMatch){
+    $errorContent = "comment of the second user was not found";
+    $errorNo = 9382;
+    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+}
 
 
 
