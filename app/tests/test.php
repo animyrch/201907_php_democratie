@@ -703,8 +703,36 @@ if($propositionMatch){
     array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
 }
 
+//checking that users can only delete their own comments from propositions
 
+$propTitleForComment = "Test-deleteOthersComment";
+$propContentForComment = "Test content for the testing comment deletion of other uers which should be impossible";
+$creatingUser = 1; //for User 1
+$commentingUser = 2; //for User 2
+$deletingUser = 3; //for User 3
+$testPropId = createProposition($propTitleForComment, $propContentForComment, $creatingUser);
+$testCommentToDelete = "This is a comment to be deleted for testing comment system, specifically comments of other users which should be impossible";
+$testCommentId = createComment($commentingUser, $testPropId, $testCommentToDelete);
+$result = deleteComment($deletingUser, $testCommentId);
 
+if($result === 1){
+    $errorContent = "a user was able to delete someone else's comment";
+    $errorNo = 8773;
+    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));   
+}
+
+$commentObjectsArray = getComments($testPropId);
+$commentMatch = false;
+foreach($commentObjectsArray as $key => $comment){
+    if($proposition->id_comment === $testCommentId){
+        $commentMatch = true;
+    }
+}
+if(!$commentMatch){
+    $errorContent = "comment was not found after a user who has not created it tried to delete it ";
+    $errorNo = 3631;
+    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+}
 
 /******************* testing comment Crud END ********************/
 
