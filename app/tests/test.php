@@ -655,6 +655,54 @@ if(!$commentMatch){
 }
 
 
+//testing comment deletion
+
+$propTitleForComment = "Test Title-deleteComment";
+$propContentForComment = "Test content for the testing comment deletion";
+$testUser = 1; //for User 1
+$testPropId = createProposition($propTitleForComment, $propContentForComment, $testUser);
+$testCommentToDelete = "This is a comment to be deleted for testing comment system";
+$testCommentId = createComment($testUser, $testPropId, $testCommentToDelete);
+
+//error management
+$resultDeleteCommentInvalidUser = deleteComment("", $testCommentId);
+$resultDeleteCommentInvalidComment = deleteComment($testUser, null);
+
+//correct use
+$resultDeleteComment = deleteComment($testUser, $testCommentId); 
+
+if($resultDeleteCommentInvalidUser !== -50){
+    $errorContent = "incorrect user id is not detected during comment deletion";
+    $errorNo = 9289;
+    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+}
+if($resultDeleteCommentInvalidComment !== -18){
+    $errorContent = "incorrect comment id is not detected during comment deletion";
+    $errorNo = 9489;
+    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+}
+
+if($resultDeleteComment !== 1){
+    $errorContent = "comment deletion has encountered an error";
+    $errorNo = 3989;
+    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+}
+
+$resultGetCorrectComments = getComments($testUser);
+$commentMatch = false;
+foreach($resultGetCorrectComments as $key => $currentComment){
+
+    if($currentComment->id_comment === $testCommentId){
+        $titleMatch = true;
+    }
+
+}
+if($propositionMatch){
+    $errorContent = "correct comment was not deleted";
+    $errorNo = 8278;
+    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+}
+
 
 
 
