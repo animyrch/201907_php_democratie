@@ -572,6 +572,175 @@ deleteUser($testPseudo, $testMDp);
 
 
 
+/******************* testing comment Crud START ********************/
+
+//testing comment creation
+$propTitleForComment = "Test Title-forComment";
+$propContentForComment = "Test content for the testing commenting system";
+$testUser = 1; //for User 1
+$testPropId = createProposition($propTitleForComment, $propContentForComment, $testUser);
+$testCommentContent = "This is a comment for testing comment system";
+
+//Error managements
+$testCommentIdIncorrectUser = createComment(null, $testPropId, $testCommentContent);
+$testCommentIdIncorrectProp = createComment($testUser, -30, $testCommentContent);
+$testCommentIdIncorrectComment = createComment($testUser, $testPropId, "");
+$testCommentId = createComment($testUser, $testPropId, $testCommentContent);
+
+if($testCommentIdIncorrectUser !== -50){
+    $errorContent = "incorrect user id is not detected during comment creation";
+    $errorNo = 4183;
+    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+}
+if($testCommentIdIncorrectProp !== -30){
+    $errorContent = "incorrect proposition id is not detected during comment creation";
+    $errorNo = 4183;
+    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+}
+if($testCommentIdIncorrectComment !== -15){
+    $errorContent = "incorrect comment is not detected during comment creation";
+    $errorNo = 4183;
+    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+}
+
+//correct use
+if(invalidId($testCommentId)){
+    $errorContent = "comment was not created";
+    $errorNo = 8983;
+    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+}
+
+//testing getting comments for a proposition
+$propTitleForComment = "Test Title-forComment";
+$propContentForComment = "Test content for the testing gathering all comments for a given proposition";
+$creatingUser = 3; //for User 3
+$testPropId = createProposition($propTitleForComment, $propContentForComment, $creatingUser);
+$commentUser1 = 3;
+$commentUser2 = 2;
+$testCommentContentUser1 = "This is a comment from User 3 for testing comment gathering system and its their own proposition";
+$testCommentContentUser2 = "This is a comment from User 2 for testing comment gathering system";
+$commentFromUser1 = createComment($commentUser1, $testPropId, $testCommentContentUser1);
+$commentFromUser2 = createComment($commentUser2, $testPropId, $testCommentContentUser2);
+
+$commentObjectsArrayIncorrectProp = getComments(null);
+$commentObjectsArray = getComments($testPropId);
+
+if($commentObjectsArrayIncorrectProp !== -30){
+    $errorContent = "incorrect proposition id is not detected during comment gathering";
+    $errorNo = 9893;
+    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+}
+
+$commentMatch = false;
+foreach($commentObjectsArray as $key => $comment){
+    if($proposition->id_comment === $commentFromUser1){
+        $commentMatch = true;
+    }
+}
+if(!$commentMatch){
+    $errorContent = "comment of the first user was not found";
+    $errorNo = 8298;
+    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+}
+$commentMatch = false;
+foreach($commentObjectsArray as $key => $comment){
+    if($proposition->id_comment === $commentFromUser2){
+        $commentMatch = true;
+    }
+}
+if(!$commentMatch){
+    $errorContent = "comment of the second user was not found";
+    $errorNo = 9382;
+    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+}
+
+
+//testing comment deletion
+
+$propTitleForComment = "Test Title-deleteComment";
+$propContentForComment = "Test content for the testing comment deletion";
+$testUser = 1; //for User 1
+$testPropId = createProposition($propTitleForComment, $propContentForComment, $testUser);
+$testCommentToDelete = "This is a comment to be deleted for testing comment system";
+$testCommentId = createComment($testUser, $testPropId, $testCommentToDelete);
+
+//error management
+$resultDeleteCommentInvalidUser = deleteComment("", $testCommentId);
+$resultDeleteCommentInvalidComment = deleteComment($testUser, null);
+
+//correct use
+$resultDeleteComment = deleteComment($testUser, $testCommentId); 
+
+if($resultDeleteCommentInvalidUser !== -50){
+    $errorContent = "incorrect user id is not detected during comment deletion";
+    $errorNo = 9289;
+    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+}
+if($resultDeleteCommentInvalidComment !== -18){
+    $errorContent = "incorrect comment id is not detected during comment deletion";
+    $errorNo = 9489;
+    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+}
+
+if($resultDeleteComment !== 1){
+    $errorContent = "comment deletion has encountered an error";
+    $errorNo = 3989;
+    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+}
+
+$resultGetCorrectComments = getComments($testUser);
+$commentMatch = false;
+foreach($resultGetCorrectComments as $key => $currentComment){
+
+    if($currentComment->id_comment === $testCommentId){
+        $titleMatch = true;
+    }
+
+}
+if($propositionMatch){
+    $errorContent = "correct comment was not deleted";
+    $errorNo = 8278;
+    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+}
+
+//checking that users can only delete their own comments from propositions
+
+$propTitleForComment = "Test-deleteOthersComment";
+$propContentForComment = "Test content for the testing comment deletion of other uers which should be impossible";
+$creatingUser = 1; //for User 1
+$commentingUser = 2; //for User 2
+$deletingUser = 3; //for User 3
+$testPropId = createProposition($propTitleForComment, $propContentForComment, $creatingUser);
+$testCommentToDelete = "This is a comment to be deleted for testing comment system, specifically comments of other users which should be impossible";
+$testCommentId = createComment($commentingUser, $testPropId, $testCommentToDelete);
+$result = deleteComment($deletingUser, $testCommentId);
+
+if($result === 1){
+    $errorContent = "a user was able to delete someone else's comment";
+    $errorNo = 8773;
+    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));   
+}
+
+$commentObjectsArray = getComments($testPropId);
+$commentMatch = false;
+foreach($commentObjectsArray as $key => $comment){
+    if($proposition->id_comment === $testCommentId){
+        $commentMatch = true;
+    }
+}
+if(!$commentMatch){
+    $errorContent = "comment was not found after a user who has not created it tried to delete it ";
+    $errorNo = 3631;
+    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+}
+
+/******************* testing comment Crud END ********************/
+
+
+
+
+
+
 
 
 
