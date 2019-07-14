@@ -18,3 +18,7 @@
 .voteContainer  a{
     min-width: 30%;
 }
+
+.comment-button{
+    text-align: center;
+}

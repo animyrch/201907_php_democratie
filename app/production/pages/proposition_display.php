@@ -2,6 +2,7 @@
 require_once __DIR__."/../inc/session.inc.php";
 require_once __DIR__."/../inc/header.inc.php";
 
+$messageErreur = "";
 $propositionId = "";
 $user = "";
 $alreadyVoted = 0;
@@ -21,6 +22,7 @@ if(!empty($_GET["propositionId"])){
 }
 
 require_once __DIR__."/../inc/functions.inc.php";
+
 // debug($_GET);
 $proposition = getProposition($proposer, $propositionId);
 if($proposition){
@@ -30,7 +32,11 @@ if($proposition){
     header("Location: dashboard.php?action=propositionDisplayFailed");
 }
 ?>
+<!-- Propositions section -->
 <section>
+    <?php if($messageErreur != ""){ ?>
+    <div class="notification is-primary"><?= $messageErreur ?></div>
+    <?php } ?>
     <div class="container">
         <article class="message">
         <div class="message-header">
@@ -47,6 +53,63 @@ if($proposition){
             <a href="dashboard.php?action=voteAgainst&proposition=<?=$propositionId?>" class="button is-danger is-rounded" <?php if($alreadyVoted == 1) echo " disabled "; ?>>Voter Contre Cette Proposition</a>
         </div>
         </article>
+        <form method="POST" action="?user=<?=$proposer?>&propositionId=<?=$propositionId?>&alreadyVoted=<?=$alreadyVoted?>&action=comment">
+            <div class="field">
+                <label class="label">Laisser un commentaire</label>
+                <div class="control">
+                    <textarea name="commentContent" class="textarea" placeholder="Votre commentaire"></textarea>
+                </div>
+            </div>
+            <div class="control comment-button">
+                <button class="button is-link">Submit</button>
+            </div>
+        </form>
     </div>
-    
+</section>
+
+
+<!-- Comments section -->
+<?php
+$action = (!empty($_GET["action"]) ? $_GET["action"] : "");
+if($action == "comment"){
+    $commentContent = $_POST["commentContent"];
+    createComment($userId, $propositionId, $commentContent);
+}
+if($action == "deleteComment"){
+    $commentToDelete = $_GET["commentToDelete"];
+    deleteComment($userId, $commentToDelete);
+}
+$comments = [];
+$comments = getComments($propositionId);
+?>
+<section>
+    <div class="container">
+        <header class="card-header">
+            <p class="card-header-title">
+                Les commentaires sur cette proposition (<?=count($comments)?>)
+            </p>
+        </header>
+        <div class="comments tile is-ancestor is-vertical">
+
+        <?php foreach($comments as $key => $comment){ 
+        $commenter = getUserById($comment->id_user);
+        $commentTime =  $comment->date_comment;
+        $commentTimeHumanReadable =  $commentTime; ?>
+        <div class="card tile is-child">
+            <div class="card-content tile is-ancestor is-horizontal">
+                <div class="content tile  is-11 is-child">
+                    <?=$comment->comment?>
+                    <br>
+                    <b><span>Par <?=$commenter->pseudo?></span>, le <time datetime="<?=$commentTime?>"><?=$commentTimeHumanReadable?></time></b>
+                </div>
+                <?php if($userId == $comment->id_user){ ?>
+                <footer class="tile is-1 is-child">
+                    <a  href="?user=<?=$proposer?>&propositionId=<?=$propositionId?>&alreadyVoted=<?=$alreadyVoted?>&action=deleteComment&commentToDelete=<?=$comment->id_comment?>" 
+                        class="card-footer-item">Delete</a>
+                </footer>
+                <?php } ?>
+            </div>
+        </div>
+        <?php } ?>
+    </div>
 </section>
