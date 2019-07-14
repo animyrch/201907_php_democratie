@@ -17,31 +17,31 @@ $result4 = checkUser("user1", "wrongValue"); //-3
 $result5 = checkUser("user1", ""); // -2
 $result6 = checkUser("user1", "user1mdp"); // -2
 
-if($result1 !== 70){
+if($result1 !== -70){
     $errorContent = "checkUser doesn't verify username correctly";
     $errorNo = 1993;
     array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
 }
 
-if($result2 !== 60){
+if($result2 !== -60){
     $errorContent = "checkUser doesn't verify username first in case of empty values";
     $errorNo = 2891;
     array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
 }
 
-if($result3 !== 70){
+if($result3 !== -70){
     $errorContent = "checkUser doesn't verify username correctly";
     $errorNo = 2901;
     array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
 }
 
-if($result4 !== 70){
+if($result4 !== -70){
     $errorContent = "checkUser doesn't verify password correctly";
     $errorNo = 8391;
     array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
 }
 
-if($result5 !== 10){
+if($result5 !== -10){
     $errorContent = "checkUser doesn't verify if password is empty";
     $errorNo = 1089;
     array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
@@ -74,37 +74,37 @@ $resultCreatePropositionWithInvalidUserId3 = createProposition($testTitle, $test
 //correct use
 $resultCreateCorrectProposition = createProposition($testTitle, $testContent, $testUser);
 
-if($resultCreatePropositionWithEmptyTitle !== 40){
+if($resultCreatePropositionWithEmptyTitle !== -40){
     $errorContent = "empty title error is not detected during proposition creation";
     $errorNo = 1939;
     array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
 }
-if($resultCreatePropositionWithEmptyTitle2 !== 40){
+if($resultCreatePropositionWithEmptyTitle2 !== -40){
     $errorContent = "null title error is not detected during proposition creation";
     $errorNo = 9189;
     array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
 }
-if($resultCreatePropositionWithEmptyContent !== 20){
+if($resultCreatePropositionWithEmptyContent !== -20){
     $errorContent = "empty contents error is not detected during proposition creation";
     $errorNo = 9183;
     array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
 }
-if($resultCreatePropositionWithEmptyContent2 !== 20){
+if($resultCreatePropositionWithEmptyContent2 !== -20){
     $errorContent = "null contents error is not detected during proposition creation";
     $errorNo = 1989;
     array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
 }
-if($resultCreatePropositionWithInvalidUserId !== 50){
+if($resultCreatePropositionWithInvalidUserId !== -50){
     $errorContent = "empty user id error is not detected during proposition creation";
     $errorNo = 3891;
     array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
 }
-if($resultCreatePropositionWithInvalidUserId2 !== 50){
+if($resultCreatePropositionWithInvalidUserId2 !== -50){
     $errorContent = "null user id error is not detected during proposition creation";
     $errorNo = 9198;
     array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
 }
-if($resultCreatePropositionWithInvalidUserId3 !== 50){
+if($resultCreatePropositionWithInvalidUserId3 !== -50){
     $errorContent = "incorrect user id error is not detected during proposition creation";
     $errorNo = 8938;
     array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
@@ -131,17 +131,17 @@ $resultGetPropositionWithInvalidUserId3 = getUserPropositions(-1);
 //correct use
 $resultGetCorrectPropositions = getUserPropositions($testUser);
 
-if($resultGetPropositionWithInvalidUserId !== 50){
+if($resultGetPropositionWithInvalidUserId !== -50){
     $errorContent = "empty user id is not detected during proposition read";
     $errorNo = 7813;
     array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
 }
-if($resultGetPropositionWithInvalidUserId2 !== 50){
+if($resultGetPropositionWithInvalidUserId2 !== -50){
     $errorContent = "null user id is not detected during proposition read";
     $errorNo = 8798;
     array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
 }
-if($resultGetPropositionWithInvalidUserId !== 50){
+if($resultGetPropositionWithInvalidUserId !== -50){
     $errorContent = "incorrect user id is not detected during proposition read";
     $errorNo = 3513;
     array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
@@ -184,12 +184,12 @@ $resultDeletePropositionWithInvalidPropositionId = deleteProposition($testUser, 
 $resultDeleteCorrectProposition = 1;
 // debug($resultDeleteCorrectProposition);
 
-if($resultDeletePropositionWithInvalidUserId !== 50){
+if($resultDeletePropositionWithInvalidUserId !== -50){
     $errorContent = "empty user id is not detected during proposition deletion";
     $errorNo = 7190;
     array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
 }
-if($resultDeletePropositionWithInvalidPropositionId !== 30){
+if($resultDeletePropositionWithInvalidPropositionId !== -30){
     $errorContent = "empty proposition id is not detected during proposition deletion";
     $errorNo = 9091;
     array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
@@ -228,12 +228,12 @@ $resultGetPropositionWithInvalidPropositionId = getProposition($testUser, "");
 //correct use
 $resultGetCorrectProposition = getProposition($testUser, $testPropositionId);
 
-if($resultGetPropositionWithInvalidUserId !== 50){
+if($resultGetPropositionWithInvalidUserId !== -50){
     $errorContent = "empty user id is not detected during proposition read";
     $errorNo = 8954;
     array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
 }
-if($resultGetPropositionWithInvalidPropositionId !== 30){
+if($resultGetPropositionWithInvalidPropositionId !== -30){
     $errorContent = "empty proposition id is not detected during proposition read";
     $errorNo = 8788;
     array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
@@ -271,22 +271,22 @@ $resultUpdatePropositionWithEmptContent = updateProposition($testUser, $testProp
 
 // //correct use
 $resultUpdateCorrectProposition = updateProposition($testUser, $testPropositionId, $newTestTitle, $newTestContent);
-if($resultUpdatePropositionWithEmptyUserId !== 50){
+if($resultUpdatePropositionWithEmptyUserId !== -50){
     $errorContent = "incorrect user id is not detected during proposition update";
     $errorNo = 6474;
     array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
 }
-if($resultUpdatePropositionWithEmptyPropositionId !== 30){
+if($resultUpdatePropositionWithEmptyPropositionId !== -30){
     $errorContent = "incorrect proposition id is not detected during proposition update";
     $errorNo = 9573;
     array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
 }
-if($resultUpdatePropositionWithEmptTitle !== 40){
+if($resultUpdatePropositionWithEmptTitle !== -40){
     $errorContent = "empty title is not detected during proposition update";
     $errorNo = 3742;
     array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
 }
-if($resultUpdatePropositionWithEmptContent !== 20){
+if($resultUpdatePropositionWithEmptContent !== -20){
     $errorContent = "empty content is not detected during proposition creation";
     $errorNo = 2746;
     array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
@@ -321,12 +321,12 @@ $resultCorrectSubmitProposition = submitPropositionToVote($testUser, $testPropos
 
 
 //error management
-if($resultSubmitPropositionWithEmptyUserId !== 50){
+if($resultSubmitPropositionWithEmptyUserId !== -50){
     $errorContent = "incorrect user id is not detected during proposition submission to vote";
     $errorNo = 3421;
     array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
 }
-if($resultSubmitPropositionWithEmptyPropositionId !== 30){
+if($resultSubmitPropositionWithEmptyPropositionId !== -30){
     $errorContent = "incorrect proposition id is not detected during proposition submission to vote";
     $errorNo = 9289;
     array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
@@ -408,12 +408,12 @@ $resultGetVotedStatus = getVotedStatusForPropositionByUser($testUser, $testPropo
 $resultGetVotedStatusForOtherUser = getVotedStatusForPropositionByUser(1, $testPropositionIdVoted);
 // var_dump($resultGetVotedStatusForVoted);
 
-if($resultGetVotedStatusWithIncorrectUserid != 50){
+if($resultGetVotedStatusWithIncorrectUserid != -50){
     $errorContent = "empty user id error is not detected during getting voted status";
     $errorNo = 4752;
     array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
 }
-if($resultGetVotedStatusWithIncorrectPropositionid != 30){
+if($resultGetVotedStatusWithIncorrectPropositionid != -30){
     $errorContent = "empty proposition id error is not detected during getting voted status";
     $errorNo = 8536;
     array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
@@ -546,7 +546,7 @@ if($newUserId != $verificationId){
 deleteUser($testPseudo, $testMDp);
 $result = checkUser($testPseudo, $testMDp);
 
-if($result != 70){
+if($result != -70){
     $errorContent = "user was not deleted correctly";
     $errorNo = 2898;
     array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
@@ -567,6 +567,9 @@ if($testPseudo != $userInfo->pseudo){
 deleteUser($testPseudo, $testMDp);
 
 /******************* testing user Crud END ********************/
+
+
+
 
 
 

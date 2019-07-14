@@ -10,13 +10,13 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         $mdp = $_POST["mdp"];
         $userCheckResult = checkUser($username, $mdp);
 
-        if($userCheckResult === 60){
+        if($userCheckResult === -60){
             header("Location: ../index.php?action=emptyUsername");
         }
-        elseif($userCheckResult === 10){
+        elseif($userCheckResult === -10){
             header("Location: ../index.php?action=emptyPassword");
         }
-        elseif($userCheckResult === 70){
+        elseif($userCheckResult === -70){
             header("Location: ../index.php?action=wrongInfo&username=$username");
         }
         else{
