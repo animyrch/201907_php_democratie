@@ -180,9 +180,7 @@ $resultDeletePropositionWithInvalidUserId = deleteProposition("", $testPropositi
 $resultDeletePropositionWithInvalidPropositionId = deleteProposition($testUser, -1);
 
 //correct use
-// $resultDeleteCorrectProposition = deleteProposition($testUser, $testPropositionId); //TODO this needs to be used by after deleting votes for the proposition
-$resultDeleteCorrectProposition = 1;
-// debug($resultDeleteCorrectProposition);
+$resultDeleteCorrectProposition = deleteProposition($testUser, $testPropositionId); //TODO this needs to be used by after deleting votes for the proposition
 
 if($resultDeletePropositionWithInvalidUserId !== -50){
     $errorContent = "empty user id is not detected during proposition deletion";

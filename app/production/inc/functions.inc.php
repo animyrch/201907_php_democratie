@@ -118,10 +118,30 @@ function deleteProposition($userId, $propositionId){
     // debug($userId);
     // debug($propositionId);
     global $db;
-    $query = $db->prepare("DELETE FROM proposition WHERE `id_user` = :userId AND `id_prop` = :propositionId LIMIT 1");
-    $params = array("userId" => $userId, "propositionId" => $propositionId);
-    $query->execute($params);
-    return $query->rowCount();
+
+    //checking that the proposition exists
+    $propositionObject = getProposition($userId , $propositionId);
+    if($propositionObject){
+
+        //deleting related comments
+        $query = $db->prepare("DELETE FROM commenter WHERE `id_prop` = :propositionId");
+        $params = array("propositionId" => $propositionId);
+        $query->execute($params);
+
+        //deleting related votes
+        $query = $db->prepare("DELETE FROM voter WHERE `id_prop` = :propositionId");
+        $params = array("propositionId" => $propositionId);
+        $query->execute($params);
+
+        //deleting the proposition
+        $query = $db->prepare("DELETE FROM proposition WHERE `id_user` = :userId AND `id_prop` = :propositionId LIMIT 1");
+        $params = array("userId" => $userId, "propositionId" => $propositionId);
+        $query->execute($params);
+        return $query->rowCount();
+        
+    }else{
+        return throwError("sqlError");
+    }
 }
 
 function getProposition($userId , $propositionId){
