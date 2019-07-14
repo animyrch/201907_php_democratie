@@ -38,8 +38,9 @@ $votedPropositions = getPropositionsSubmittedForVote();
         <hr>
         <h3>VOS PROPOSITIONS</h3>
         <div>Nombre de propositions : <?=count($userPropositions)?></div>
+        <a href="proposition_create.php" class="button is-primary is-focused">Ajouter une proposition</a>
         <?php if($displayMsg != ""){ ?>
-        <div class="notification is-primary"><?= $displayMsg ?></div>
+        <div class="box"><div class="notification is-primary"><?= $displayMsg ?></div></div>
         <?php } ?>
         <table class="table">
             <thead>
@@ -85,8 +86,6 @@ $votedPropositions = getPropositionsSubmittedForVote();
             <?php } ?>
             </tbody>
         </table>
-
-        <a href="proposition_create.php" class="button is-primary is-focused">Ajouter une proposition</a>
 
         <hr>
         <h3>Propositions soumises au vote</h3>
