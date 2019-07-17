@@ -173,7 +173,7 @@ function getUserPropositions($userId){
     return $query->fetchAll(PDO::FETCH_OBJ);
 }
 
-function getPropositionsSubmittedForVote(){
+function getPropositionsToVote(){
     global $db;
     $query = $db->prepare("SELECT * FROM proposition WHERE `date_valid` IS NOT NULL");
     $query->execute();
@@ -221,7 +221,7 @@ function submitPropositionToVote($userId, $propositionId){
 
 /**************** VOTING CRUD *************************/
 
-function getVotedStatusForPropositionByUser($userId, $propositionId){
+function userVotedForProposition($userId, $propositionId){
     if(invalidId($userId)){
         return throwError("invalidUserId");
     }
