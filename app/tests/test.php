@@ -355,7 +355,7 @@ if($resultUpdatePropositionDisabled === 1){
 //getting voted propositions from all user to further voting by users who have not voted yet
 $hasError = false;
 $noError = true;
-$propositionsAvailableForVoting = getPropositionsSubmittedForVote();
+$propositionsAvailableForVoting = getPropositionsToVote();
 $votedPropositionContainer = array();
 if(!is_array($propositionsAvailableForVoting)){
     $errorContent = "voted propositions are not correctly gathered ";
@@ -400,10 +400,10 @@ $testPropositionIdVoted = createProposition($testTitleVoted, $testContentVoted, 
 submitPropositionToVote($testUser, $testPropositionIdVoted);
 //Checking if inneed, Upon creating a proposition, user automatically votes for their proposition.
 
-$resultGetVotedStatusWithIncorrectUserid = getVotedStatusForPropositionByUser(-2, $testPropositionIdVoted);
-$resultGetVotedStatusWithIncorrectPropositionid = getVotedStatusForPropositionByUser($testUser, null);
-$resultGetVotedStatus = getVotedStatusForPropositionByUser($testUser, $testPropositionIdVoted);
-$resultGetVotedStatusForOtherUser = getVotedStatusForPropositionByUser(1, $testPropositionIdVoted);
+$resultGetVotedStatusWithIncorrectUserid = userVotedForProposition(-2, $testPropositionIdVoted);
+$resultGetVotedStatusWithIncorrectPropositionid = userVotedForProposition($testUser, null);
+$resultGetVotedStatus = userVotedForProposition($testUser, $testPropositionIdVoted);
+$resultGetVotedStatusForOtherUser = userVotedForProposition(1, $testPropositionIdVoted);
 // var_dump($resultGetVotedStatusForVoted);
 
 if($resultGetVotedStatusWithIncorrectUserid != -50){
@@ -421,7 +421,7 @@ if(!$resultGetVotedStatus){
     $errorNo = 3843;
     array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
 }
-// debug(getVotedStatusForPropositionByUser(100, $testPropositionIdVoted));
+// debug(userVotedForProposition(100, $testPropositionIdVoted));
 if($resultGetVotedStatusForOtherUser){
     $errorContent = "unvoted proposition is indicated as voted";
     $errorNo = 3843;
@@ -438,7 +438,7 @@ $testUser = 3; //for User 3
 $testPropositionId = createProposition($testTitleVoted, $testContentVoted, $testUser);
 
 //checking that user 1 hasn't voted for it yet
-if(getVotedStatusForPropositionByUser(1, $testPropositionId)){
+if(userVotedForProposition(1, $testPropositionId)){
     $errorContent = "unwanted for vote found";
     $errorNo = 7391;
     array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
@@ -451,7 +451,7 @@ $nbPourAmountOld = getProposition($testUser, $testPropositionId)->nbPour;
 voteForProposition(1, $testPropositionId);
 
 //checking that user1 has voted for it
-if(!getVotedStatusForPropositionByUser(1, $testPropositionId)){
+if(!userVotedForProposition(1, $testPropositionId)){
     $errorContent = "searched for vote was not found";
     $errorNo = 3562;
     array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
@@ -484,7 +484,7 @@ $testUser = 2; //for User 2
 $testPropositionId = createProposition($testTitleVoted, $testContentVoted, $testUser);
 
 //checking that user 3 hasn't voted for it yet
-if(getVotedStatusForPropositionByUser(3, $testPropositionId)){
+if(userVotedForProposition(3, $testPropositionId)){
     $errorContent = "unwanted against vote found";
     $errorNo = 5414;
     array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
@@ -497,7 +497,7 @@ $nbAgainstAmountOld = getProposition($testUser, $testPropositionId)->nbContre;
 voteAgainstProposition(3, $testPropositionId);
 
 //checking that user3 has voted against it
-if(!getVotedStatusForPropositionByUser(3, $testPropositionId)){
+if(!userVotedForProposition(3, $testPropositionId)){
     $errorContent = "searched against vote was not found";
     $errorNo = 1987;
     array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));

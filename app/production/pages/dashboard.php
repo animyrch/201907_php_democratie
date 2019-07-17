@@ -27,7 +27,7 @@ if(!empty($_GET["action"])){
 }
 
 $userPropositions = getUserPropositions($userId);
-$votedPropositions = getPropositionsSubmittedForVote();
+$propositionsToVote = getPropositionsToVote();
 ?>
 
 <section>
@@ -103,18 +103,18 @@ $votedPropositions = getPropositionsSubmittedForVote();
                 </tr>
             </thead>
             <tbody>
-                <?php foreach($votedPropositions as $votedProposition){ 
-                    $proposer = getUserById($votedProposition->id_user);
-                    $userVotedForThisProposition = getVotedStatusForPropositionByUser($userId, $votedProposition->id_prop); ?>
+                <?php foreach($propositionsToVote as $proposition){ 
+                    $proposer = getUserById($proposition->id_user);
+                    $userVotedForThisProposition = userVotedForProposition($userId, $proposition->id_prop); ?>
                     <tr>
-                        <th><?=$votedProposition->id_prop?></th>
+                        <th><?=$proposition->id_prop?></th>
                         <td><?=$proposer->pseudo?></td>
-                        <td><?=$votedProposition->title?></td>
+                        <td><?=$proposition->title?></td>
                         <td><?=($userVotedForThisProposition ? "déjà voté" : "")?></td>
-                        <td><?=$votedProposition->nbPour?></td>
-                        <td><?=$votedProposition->nbContre?></td>
+                        <td><?=$proposition->nbPour?></td>
+                        <td><?=$proposition->nbContre?></td>
                         <td>
-                            <a href="proposition_display.php?user=<?=$votedProposition->id_user?>&propositionId=<?=$votedProposition->id_prop?>&alreadyVoted=<?=$userVotedForThisProposition?>" 
+                            <a href="proposition_display.php?user=<?=$proposition->id_user?>&propositionId=<?=$proposition->id_prop?>&alreadyVoted=<?=$userVotedForThisProposition?>" 
                             class="button is-link">Voir</a>
                         </td>
                     </tr>
