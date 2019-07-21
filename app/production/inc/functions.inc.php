@@ -378,7 +378,10 @@ function debug($elem){
     var_dump($elem);
     echo "</pre>";
 }
-
+function createUniqueToken(){
+    $token = bin2hex(random_bytes(16));
+    return $token;
+}
 function invalidId($userId){
     return (empty($userId) || $userId < 1);
     //TODO check if full digit
