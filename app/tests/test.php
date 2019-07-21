@@ -18,10 +18,9 @@ $testMDp = "FZEJ232";
 
 $newUserId = createUser($testPseudo, $testMDp, $testEmailWrong);
 if($newUserId !== -19){
-    $errorContent = "incorrect email is not detected during user creation";
-    $errorNo = 3242;
-    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+    addToResults("incorrect email is not detected during user creation", __LINE__);
 }
+
 
 $newUserId = createUser($testPseudo, $testMDp, $testEmail);
 
@@ -31,16 +30,12 @@ $params = array("pseudo" => $testPseudo);
 $query->execute($params);
 $userId = $query->fetchColumn();
 if($newUserId != $userId){
-    $errorContent = "user was not created correctly";
-    $errorNo = 2870;
-    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+    addToResults("user was not created correctly", __LINE__);
 }
 //check user
 $resultId = checkUser($testPseudo, $testMDp);
 if(invalidId($resultId)){
-    $errorContent = "user check fails";
-    $errorNo = 6256;
-    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+    addToResults("user check fails", __LINE__);
 }
 
 //user deletion
@@ -48,9 +43,7 @@ deleteUser($testPseudo, $testMDp);
 $result = checkUser($testPseudo, $testMDp);
 
 if($result != -70){
-    $errorContent = "user was not deleted correctly";
-    $errorNo = 2898;
-    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+    addToResults("user was not deleted correctly", __LINE__);
 }
 
 //getting a pseudo by id
@@ -60,9 +53,7 @@ $newUserId = createUser($testPseudo, $testMDp, $testEmail);
 
 $userInfo = getUserById($newUserId);
 if($testPseudo != $userInfo->pseudo){
-    $errorContent = "correct pseudo was not found";
-    $errorNo = 3918;
-    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+    addToResults("correct pseudo was not found", __LINE__);
 }
 deleteUser($testPseudo, $testMDp);
 
@@ -86,33 +77,23 @@ $result5 = checkUser("user1", ""); // -2
 // $result6 = checkUser("user1", "user1mdp"); // -2
 
 if($result1 !== -70){
-    $errorContent = "checkUser doesn't verify username correctly";
-    $errorNo = 1993;
-    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+    addToResults("checkUser doesn't verify username correctly", __LINE__);
 }
 
 if($result2 !== -60){
-    $errorContent = "checkUser doesn't verify username first in case of empty values";
-    $errorNo = 2891;
-    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+    addToResults("checkUser doesn't verify username first in case of empty values", __LINE__);
 }
 
 if($result3 !== -70){
-    $errorContent = "checkUser doesn't verify username correctly";
-    $errorNo = 2901;
-    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+    addToResults("checkUser doesn't verify username correctly", __LINE__);
 }
 
 if($result4 !== -70){
-    $errorContent = "checkUser doesn't verify password correctly";
-    $errorNo = 8391;
-    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+    addToResults("checkUser doesn't verify password correctly", __LINE__);
 }
 
 if($result5 !== -10){
-    $errorContent = "checkUser doesn't verify if password is empty";
-    $errorNo = 1089;
-    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+    addToResults("checkUser doesn't verify if password is empty", __LINE__);
 }
 
 /******************* testing login functionalities END ********************/
@@ -137,45 +118,29 @@ $resultCreatePropositionWithInvalidUserId3 = createProposition($testTitle, $test
 $resultCreateCorrectProposition = createProposition($testTitle, $testContent, $testUser);
 
 if($resultCreatePropositionWithEmptyTitle !== -40){
-    $errorContent = "empty title error is not detected during proposition creation";
-    $errorNo = 1939;
-    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+    addToResults("empty title error is not detected during proposition creation", __LINE__);
 }
 if($resultCreatePropositionWithEmptyTitle2 !== -40){
-    $errorContent = "null title error is not detected during proposition creation";
-    $errorNo = 9189;
-    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+    addToResults("null title error is not detected during proposition creation", __LINE__);
 }
 if($resultCreatePropositionWithEmptyContent !== -20){
-    $errorContent = "empty contents error is not detected during proposition creation";
-    $errorNo = 9183;
-    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+    addToResults("empty contents error is not detected during proposition creation", __LINE__);
 }
 if($resultCreatePropositionWithEmptyContent2 !== -20){
-    $errorContent = "null contents error is not detected during proposition creation";
-    $errorNo = 1989;
-    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+    addToResults("null contents error is not detected during proposition creation", __LINE__);
 }
 if($resultCreatePropositionWithInvalidUserId !== -50){
-    $errorContent = "empty user id error is not detected during proposition creation";
-    $errorNo = 3891;
-    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+    addToResults("empty user id error is not detected during proposition creation", __LINE__);
 }
 if($resultCreatePropositionWithInvalidUserId2 !== -50){
-    $errorContent = "null user id error is not detected during proposition creation";
-    $errorNo = 9198;
-    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+    addToResults("null user id error is not detected during proposition creation", __LINE__);
 }
 if($resultCreatePropositionWithInvalidUserId3 !== -50){
-    $errorContent = "incorrect user id error is not detected during proposition creation";
-    $errorNo = 8938;
-    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+    addToResults("incorrect user id error is not detected during proposition creation", __LINE__);
 }
 
 if($resultCreateCorrectProposition < 1){
-    $errorContent = "a new proposition is not correctly created";
-    $errorNo = 3213;
-    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+    addToResults("a new proposition is not correctly created", __LINE__);
 }
 
 
@@ -194,19 +159,13 @@ $resultGetPropositionWithInvalidUserId3 = getUserPropositions(-1);
 $resultGetCorrectPropositions = getUserPropositions($testUser);
 
 if($resultGetPropositionWithInvalidUserId !== -50){
-    $errorContent = "empty user id is not detected during proposition read";
-    $errorNo = 7813;
-    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+    addToResults("empty user id is not detected during proposition read", __LINE__);
 }
 if($resultGetPropositionWithInvalidUserId2 !== -50){
-    $errorContent = "null user id is not detected during proposition read";
-    $errorNo = 8798;
-    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+    addToResults("null user id is not detected during proposition read", __LINE__);
 }
 if($resultGetPropositionWithInvalidUserId !== -50){
-    $errorContent = "incorrect user id is not detected during proposition read";
-    $errorNo = 3513;
-    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+    addToResults("incorrect user id is not detected during proposition read", __LINE__);
 }
 
 $titleMatch = false;
@@ -222,14 +181,10 @@ foreach($resultGetCorrectPropositions as $key => $proposition){
 
 }
 if(!$titleMatch){
-    $errorContent = "correct proposition title was not present";
-    $errorNo = 3999;
-    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+    addToResults("correct proposition title was not present", __LINE__);
 }
 if(!$titleMatch){
-    $errorContent = "correct proposition content was not present";
-    $errorNo = 2898;
-    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+    addToResults("correct proposition content was not present", __LINE__);
 }
 
 //Deleting a proposition of a user
@@ -245,20 +200,14 @@ $resultDeletePropositionWithInvalidPropositionId = deleteProposition($testUser, 
 $resultDeleteCorrectProposition = deleteProposition($testUser, $testPropositionId); //TODO this needs to be used by after deleting votes for the proposition
 
 if($resultDeletePropositionWithInvalidUserId !== -50){
-    $errorContent = "empty user id is not detected during proposition deletion";
-    $errorNo = 7190;
-    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+    addToResults("empty user id is not detected during proposition deletion", __LINE__);
 }
 if($resultDeletePropositionWithInvalidPropositionId !== -30){
-    $errorContent = "empty proposition id is not detected during proposition deletion";
-    $errorNo = 9091;
-    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+    addToResults("empty proposition id is not detected during proposition deletion", __LINE__);
 }
 
 if($resultDeleteCorrectProposition !== 1){
-    $errorContent = "proposition deletion has encountered an error";
-    $errorNo = 8945;
-    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+    addToResults("proposition deletion has encountered an error", __LINE__);
 }
 
 $resultGetCorrectPropositions = getUserPropositions($testUser);
@@ -271,9 +220,7 @@ foreach($resultGetCorrectPropositions as $key => $proposition){
 
 }
 if($propositionMatch){
-    $errorContent = "correct proposition was not deleted";
-    $errorNo = 8791;
-    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+    addToResults("correct proposition was not deleted", __LINE__);
 }
 
 //reading a specific proposition
@@ -289,30 +236,20 @@ $resultGetPropositionWithInvalidPropositionId = getProposition($testUser, "");
 $resultGetCorrectProposition = getProposition($testUser, $testPropositionId);
 
 if($resultGetPropositionWithInvalidUserId !== -50){
-    $errorContent = "empty user id is not detected during proposition read";
-    $errorNo = 8954;
-    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+    addToResults("empty user id is not detected during proposition read", __LINE__);
 }
 if($resultGetPropositionWithInvalidPropositionId !== -30){
-    $errorContent = "empty proposition id is not detected during proposition read";
-    $errorNo = 8788;
-    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+    addToResults("empty proposition id is not detected during proposition read", __LINE__);
 }
 
 if(!$resultGetCorrectProposition){
-    $errorContent = "correct proposition object was not created";
-    $errorNo = 8938;
-    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+    addToResults("correct proposition object was not created", __LINE__);
 }
 if($resultGetCorrectProposition->title != $testTitle){
-    $errorContent = "correct proposition title was not found";
-    $errorNo = 3452;
-    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+    addToResults("correct proposition title was not found", __LINE__);
 }
 if($resultGetCorrectProposition->contenu != $testContent){
-    $errorContent = "correct proposition content was not present";
-    $errorNo = 9829;
-    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+    addToResults("correct proposition content was not present", __LINE__);
 }
 
 //Updating a proposition
@@ -332,42 +269,28 @@ $resultUpdatePropositionWithEmptContent = updateProposition($testUser, $testProp
 // //correct use
 $resultUpdateCorrectProposition = updateProposition($testUser, $testPropositionId, $newTestTitle, $newTestContent);
 if($resultUpdatePropositionWithEmptyUserId !== -50){
-    $errorContent = "incorrect user id is not detected during proposition update";
-    $errorNo = 6474;
-    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+    addToResults("incorrect user id is not detected during proposition update", __LINE__);
 }
 if($resultUpdatePropositionWithEmptyPropositionId !== -30){
-    $errorContent = "incorrect proposition id is not detected during proposition update";
-    $errorNo = 9573;
-    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+    addToResults("incorrect proposition id is not detected during proposition update", __LINE__);
 }
 if($resultUpdatePropositionWithEmptTitle !== -40){
-    $errorContent = "empty title is not detected during proposition update";
-    $errorNo = 3742;
-    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+    addToResults("empty title is not detected during proposition update", __LINE__);
 }
 if($resultUpdatePropositionWithEmptContent !== -20){
-    $errorContent = "empty content is not detected during proposition creation";
-    $errorNo = 2746;
-    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+    addToResults("empty content is not detected during proposition creation", __LINE__);
 }
 
 if($resultUpdateCorrectProposition !== 1){
-    $errorContent = "the proposition is not correctly updated";
-    $errorNo = 5743;
-    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+    addToResults("the proposition is not correctly updated", __LINE__);
 }
 
 $newPropositionContents = getProposition($testUser, $testPropositionId);
 if($newPropositionContents->title !== $newTestTitle){
-    $errorContent = "the proposition title was not correctly updated";
-    $errorNo = 5345;
-    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));    
+    addToResults("the proposition title was not correctly updated", __LINE__);
 }
 if($newPropositionContents->contenu !== $newTestContent){
-    $errorContent = "the proposition content was not correctly updated";
-    $errorNo = 3578;
-    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));    
+    addToResults("the proposition content was not correctly updated", __LINE__);
 }
 
 //submitting a proposition to vote
@@ -382,25 +305,17 @@ $resultCorrectSubmitProposition = submitPropositionToVote($testUser, $testPropos
 
 //error management
 if($resultSubmitPropositionWithEmptyUserId !== -50){
-    $errorContent = "incorrect user id is not detected during proposition submission to vote";
-    $errorNo = 3421;
-    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+    addToResults("incorrect user id is not detected during proposition submission to vote", __LINE__);
 }
 if($resultSubmitPropositionWithEmptyPropositionId !== -30){
-    $errorContent = "incorrect proposition id is not detected during proposition submission to vote";
-    $errorNo = 9289;
-    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+    addToResults("incorrect proposition id is not detected during proposition submission to vote", __LINE__);
 }
 if($resultCorrectSubmitProposition !== 1){
-    $errorContent = "the proposition content was not correctly submitted to vote";
-    $errorNo = 9249;
-    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+    addToResults("the proposition content was not correctly submitted to vote", __LINE__);
 }
 $newPropositionContents = getProposition($testUser, $testPropositionId);
 if($newPropositionContents->date_valid === ""){
-    $errorContent = "the proposition content was not correctly submitted to vote";
-    $errorNo = 5345;
-    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));    
+    addToResults("the proposition content was not correctly submitted to vote", __LINE__);    
 }
 
 //checking that a proposition can no longer be edited after submission to vote but it can still be deleted
@@ -409,9 +324,7 @@ $newTestContent = "new test content for chcking that update is disabled after su
 $resultUpdatePropositionDisabled = updateProposition($testUser, $testPropositionId, $newTestTitle, $newTestContent);
 
 if($resultUpdatePropositionDisabled === 1){
-    $errorContent = "the proposition already submitted to vote is incorrectly updated";
-    $errorNo = 2312;
-    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+    addToResults("the proposition already submitted to vote is incorrectly updated", __LINE__);
 }
 
 //getting voted propositions from all user to further voting by users who have not voted yet
@@ -420,9 +333,7 @@ $noError = true;
 $propositionsAvailableForVoting = getPropositionsToVote();
 $votedPropositionContainer = array();
 if(!is_array($propositionsAvailableForVoting)){
-    $errorContent = "voted propositions are not correctly gathered ";
-    $errorNo = 6374;
-    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+    addToResults("voted propositions are not correctly gathered ", __LINE__);
 }else{
     $votedPropositionContainer = $propositionsAvailableForVoting;
 }
@@ -436,9 +347,7 @@ foreach($votedPropositionContainer as $votedProposition){
 }
 
 if($hasError || !$noError){
-    $errorContent = "propositions not submitted to vote or malformed propositions were also gathered";
-    $errorNo = 4864;
-    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+    addToResults("propositions not submitted to vote or malformed propositions were also gathered", __LINE__);
 }
 
 
@@ -466,24 +375,16 @@ $resultGetVotedStatus = userVotedForProposition($proposer, $testPropositionIdVot
 $resultGetVotedStatusForOtherUser = userVotedForProposition(createUser("FZEFZSzefz", "fZEFZEojojfezf3", $testEmail), $testPropositionIdVoted);
 
 if($resultGetVotedStatusWithIncorrectUserid != -50){
-    $errorContent = "empty user id error is not detected during getting voted status";
-    $errorNo = 4752;
-    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+    addToResults("empty user id error is not detected during getting voted status", __LINE__);
 }
 if($resultGetVotedStatusWithIncorrectPropositionid != -30){
-    $errorContent = "empty proposition id error is not detected during getting voted status";
-    $errorNo = 8536;
-    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+    addToResults("empty proposition id error is not detected during getting voted status", __LINE__);
 }
 if(!$resultGetVotedStatus){
-    $errorContent = "voted proposition is indicated as unvoted";
-    $errorNo = 3843;
-    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+    addToResults("voted proposition is indicated as unvoted", __LINE__);
 }
 if($resultGetVotedStatusForOtherUser){
-    $errorContent = "unvoted proposition is indicated as voted";
-    $errorNo = 2329;
-    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+    addToResults("unvoted proposition is indicated as voted", __LINE__);
 }
 
 
@@ -497,9 +398,7 @@ $votingUser= createUser("FZEA23", "fzizjeiffjez", $testEmail);
 $testPropositionId = createProposition($testTitleVoted, $testContentVoted, $testUser);
 //checking that user 1 hasn't voted for it yet
 if(userVotedForProposition($votingUser, $testPropositionId)){
-    $errorContent = "unwanted for vote found";
-    $errorNo = 7391;
-    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+    addToResults("unwanted for vote found", __LINE__);
 }
 
 //getting the number of nbPour for that proposition
@@ -509,27 +408,21 @@ voteForProposition($votingUser, $testPropositionId);
 
 //checking that user1 has voted for it
 if(!userVotedForProposition($votingUser, $testPropositionId)){
-    $errorContent = "searched for vote was not found";
-    $errorNo = 3562;
-    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+    addToResults("searched for vote was not found", __LINE__);
 }
 
 //checking that that proposition's nbPour number increase by 1
 $nbPourAmountNew = getProposition($testUser, $testPropositionId)->nbPour;
 
 if($nbPourAmountOld != ($nbPourAmountNew-1)){
-    $errorContent = "votedFor counter is not increased for the proposition that was voted for";
-    $errorNo = 8782;
-    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+    addToResults("votedFor counter is not increased for the proposition that was voted for", __LINE__);
 }
 //checking that user1 can't vote for or against that proposition anymore
 voteForProposition($votingUser, $testPropositionId);
 $nbPourAmountNew2 = getProposition($testUser, $testPropositionId)->nbPour;
 
 if( (integer) $nbPourAmountNew === (integer) ($nbPourAmountNew2-1)){
-    $errorContent = "votedFor counter is increased again even though user had already voted for it";
-    $errorNo = 4562;
-    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+    addToResults("votedFor counter is increased again even though user had already voted for it", __LINE__);
 }
 
 //voting against someone else's proposition - voteAgainstProposition()
@@ -542,9 +435,7 @@ $testPropositionId = createProposition($testTitleVoted, $testContentVoted, $test
 
 //checking that user 3 hasn't voted for it yet
 if(userVotedForProposition($otherTestUSer, $testPropositionId)){
-    $errorContent = "unwanted against vote found";
-    $errorNo = 5414;
-    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+    addToResults("unwanted against vote found", __LINE__);
 }
 
 //getting the number of nbContre for that proposition
@@ -555,27 +446,21 @@ voteAgainstProposition($otherTestUSer, $testPropositionId);
 
 //checking that $otherTestUSer has voted against it
 if(!userVotedForProposition($otherTestUSer, $testPropositionId)){
-    $errorContent = "searched against vote was not found";
-    $errorNo = 1987;
-    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+    addToResults("searched against vote was not found", __LINE__);
 }
 
 //checking that that proposition's nbContre number increase by 1
 $nbAgainstAmountNew = getProposition($testUser, $testPropositionId)->nbContre;
 
 if($nbAgainstAmountOld != ($nbAgainstAmountNew-1)){
-    $errorContent = "votedAgainst counter is not increased for the proposition that was voted against";
-    $errorNo = 2989;
-    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+    addToResults("votedAgainst counter is not increased for the proposition that was voted against", __LINE__);
 }
 
 //checking that user3 can't vote for or against that proposition anymore
 voteAgainstProposition($otherTestUSer, $testPropositionId);
 $nbAgainstAmountNew2 = getProposition($testUser, $testPropositionId)->nbContre;
 if((integer) $nbAgainstAmountNew === (integer) ($nbAgainstAmountNew2-1)){
-    $errorContent = "votedAgainst counter is increased again even though user had already voted for it";
-    $errorNo = 7389;
-    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+    addToResults("votedAgainst counter is increased again even though user had already voted for it", __LINE__);
 }
 /******************* testing voting Crud END ********************/
 
@@ -602,26 +487,18 @@ $testCommentIdIncorrectComment = createComment($testUser, $testPropId, "");
 $testCommentId = createComment($testUser, $testPropId, $testCommentContent);
 
 if($testCommentIdIncorrectUser !== -50){
-    $errorContent = "incorrect user id is not detected during comment creation";
-    $errorNo = 4183;
-    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+    addToResults("incorrect user id is not detected during comment creation", __LINE__);
 }
 if($testCommentIdIncorrectProp !== -30){
-    $errorContent = "incorrect proposition id is not detected during comment creation";
-    $errorNo = 4829;
-    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+    addToResults("incorrect proposition id is not detected during comment creation", __LINE__);
 }
 if($testCommentIdIncorrectComment !== -15){
-    $errorContent = "incorrect comment is not detected during comment creation";
-    $errorNo = 4183;
-    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+    addToResults("incorrect comment is not detected during comment creation", __LINE__);
 }
 
 //correct use
 if(invalidId($testCommentId)){
-    $errorContent = "comment was not created";
-    $errorNo = 8983;
-    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+    addToResults("comment was not created", __LINE__);
 }
 
 //testing getting comments for a proposition
@@ -639,9 +516,7 @@ $commentFromUser2 = createComment($commentUser2, $testPropId, $testCommentConten
 $commentObjectsArrayIncorrectProp = getComments(null);
 $commentObjectsArray = getComments($testPropId);
 if($commentObjectsArrayIncorrectProp !== -30){
-    $errorContent = "incorrect proposition id is not detected during comment gathering";
-    $errorNo = 9893;
-    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+    addToResults("incorrect proposition id is not detected during comment gathering", __LINE__);
 }
 
 $commentMatch = false;
@@ -651,9 +526,7 @@ foreach($commentObjectsArray as $key => $comment){
     }
 }
 if(!$commentMatch){
-    $errorContent = "comment of the first user was not found";
-    $errorNo = 8298;
-    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+    addToResults("comment of the first user was not found", __LINE__);
 }
 $commentMatch = false;
 foreach($commentObjectsArray as $key => $comment){
@@ -662,9 +535,7 @@ foreach($commentObjectsArray as $key => $comment){
     }
 }
 if(!$commentMatch){
-    $errorContent = "comment of the second user was not found";
-    $errorNo = 9382;
-    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+    addToResults("comment of the second user was not found", __LINE__);
 }
 
 
@@ -685,20 +556,14 @@ $resultDeleteCommentInvalidComment = deleteComment($testUser, null);
 $resultDeleteComment = deleteComment($testUser, $testCommentId); 
 
 if($resultDeleteCommentInvalidUser !== -50){
-    $errorContent = "incorrect user id is not detected during comment deletion";
-    $errorNo = 9289;
-    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+    addToResults("incorrect user id is not detected during comment deletion", __LINE__);
 }
 if($resultDeleteCommentInvalidComment !== -18){
-    $errorContent = "incorrect comment id is not detected during comment deletion";
-    $errorNo = 9489;
-    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+    addToResults("incorrect comment id is not detected during comment deletion", __LINE__);
 }
 
 if($resultDeleteComment !== 1){
-    $errorContent = "comment deletion has encountered an error";
-    $errorNo = 3989;
-    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+    addToResults("comment deletion has encountered an error", __LINE__);
 }
 
 $resultGetCorrectComments = getComments($testUser);
@@ -711,9 +576,7 @@ foreach($resultGetCorrectComments as $key => $currentComment){
 
 }
 if($propositionMatch){
-    $errorContent = "correct comment was not deleted";
-    $errorNo = 8278;
-    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+    addToResults("correct comment was not deleted", __LINE__);
 }
 
 //checking that users can only delete their own comments from propositions
@@ -729,9 +592,7 @@ $testCommentId = createComment($commentingUser, $testPropId, $testCommentToDelet
 $result = deleteComment($deletingUser, $testCommentId);
 
 if($result === 1){
-    $errorContent = "a user was able to delete someone else's comment";
-    $errorNo = 8773;
-    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));   
+    addToResults("a user was able to delete someone else's comment", __LINE__);
 }
 
 $commentObjectsArray = getComments($testPropId);
@@ -742,18 +603,16 @@ foreach($commentObjectsArray as $key => $comment){
     }
 }
 if(!$commentMatch){
-    $errorContent = "comment was not found after a user who has not created it tried to delete it ";
-    $errorNo = 3631;
-    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+    addToResults("comment was not found after a user who has not created it tried to delete it ", __LINE__);
 }
 
 /******************* testing comment Crud END ********************/
 
 
+showTestResults($errorResults);
 
 
 eraseDb();
-
 
 
 
@@ -773,15 +632,23 @@ function eraseDb(){
     $query = $db->exec($sql);
 }
 
-if(empty($errorResults)){
-    echo "<br><br>all PHP tests were succesfull";
-}else{
-    $result = "<br><br>some PHP tests were unsuccessfull ";
-    foreach($errorResults as $content){
-
-        $result .= "<br>".$content["errorno"]." : ".$content["errorcontent"]. "<br>";
-    }
-    echo $result;
+function addToResults($message, $errorNo){
+    global $errorResults;
+    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $message));
 }
+function showTestResults($results){
+    global $errorResults;
+    if(empty($results)){
+        echo "<br><br>all PHP tests were succesfull";
+    }else{
+        $result = "<br><br>some PHP tests were unsuccessfull ";
+        foreach($errorResults as $content){
+    
+            $result .= "<br>".$content["errorno"]." : ".$content["errorcontent"]. "<br>";
+        }
+        echo $result;
+    }
+}
+
 
 ?>
