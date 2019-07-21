@@ -59,16 +59,9 @@ deleteUser($testPseudo, $testMDp);
 
 /******************* testing user Crud END ********************/
 
+/******************* testing login functionalities END ********************/
+// db shouldn't have any users. So all checkUser uses should fail
 
-//creating three users for the next tests
-
-createUser("FZEFZEL", "3243532532", $testEmail);
-createUser("ZEKFfezkf", "DZAKR32", $testEmail);
-createUser("D32LRK", "FZEFK32", $testEmail);
-
-//check user should respond according to the following array
-$correctUsername = "user1";
-$correctPassword = "user1mdp";
 $result1 = checkUser("wrongValue", "wrongValue"); //-3
 $result2 = checkUser("", ""); // -1 - should first check for username
 $result3 = checkUser("wrongValue", "user1mdp"); //-3
@@ -94,6 +87,27 @@ if($result4 !== -70){
 
 if($result5 !== -10){
     addToResults("checkUser doesn't verify if password is empty", __LINE__);
+}
+
+//creating a user
+$correctUsername = "user1";
+$correctPassword = "user1mdp";
+$correctEmail = "test@test.com";
+$userId = createUser($correctUsername, $correctPassword, $correctEmail);
+
+//we check that user can't login yet since they have not activated their account
+$successfulLogin = loginUser($correctUsername, $correctPassword);
+
+if($successfulLogin !== -13){
+    addToResults("a newly created account shouldn't be able to login", __LINE__);
+}
+$userToken = getUserById($userId)->user_token;
+validateUserAccount($userId, $userToken);
+
+//we check that user can login yet since they have activated their account
+$successfulLogin = loginUser($correctUsername, $correctPassword);
+if(invalidId($successfulLogin)){
+    addToResults("a validated  account should be able to login", __LINE__);
 }
 
 /******************* testing login functionalities END ********************/

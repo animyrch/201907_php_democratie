@@ -49,6 +49,10 @@ if(isset($_GET["username"])){
                     Votre pseudo ou votre mot de passe est incorrect
                 <?php } ?>
 
+                <?php if($action == "pendingAccount"){ ?>
+                    Votre compte n'est pas encore validé via votre email
+                <?php } ?>
+                
                 <?php if($action == "disconnect"){ ?>
                     Au revoir et à bientôt
                 <?php
