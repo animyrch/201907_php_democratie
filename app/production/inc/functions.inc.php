@@ -41,8 +41,8 @@ function createUser($username, $mdp, $email){
 
     global $db;
     
-    $query = $db->prepare('INSERT INTO user (pseudo, hashed_mdp) VALUES (:pseudo, :hashedmdp)');
-    $params = array("pseudo" => $username, "hashedmdp" => $mdp);
+    $query = $db->prepare('INSERT INTO user (pseudo, hashed_mdp, e_mail) VALUES (:pseudo, :hashedmdp, :email)');
+    $params = array("pseudo" => $username, "hashedmdp" => $mdp, "email" => $email);
     $query->execute($params);
     return $db->lastInsertId();
 }
