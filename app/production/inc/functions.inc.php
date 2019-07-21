@@ -15,32 +15,35 @@ function checkUser($username, $mdp){
 
     global $db;
     
-    $query = $db->prepare('SELECT id_user FROM user WHERE pseudo = :pseudo AND mdp = :mdp');
-    $params = array("mdp" => $mdp, "pseudo" => $username);
+    $query = $db->prepare('SELECT * FROM user WHERE pseudo = :pseudo');
+    $params = array("pseudo" => $username);
     $query->execute($params);
-    $user = $query->fetch(PDO::FETCH_ASSOC);
-
-    if($user){
-        return (integer) $user["id_user"];
+    $user = $query->fetch(PDO::FETCH_OBJ);
+    if($user && password_verify($mdp, $user->hashed_mdp)){
+        return (integer) $user->id_user;
     }else{
         return throwError("invalidUsernameOrPassword");
     }
 }
 
-function createUser($username, $mdp){
+function createUser($username, $mdp, $email){
     if(empty($username)){
         return throwError("invalidUsername");
     }
+    if(invalidEmail($email)){
+        return throwError("invalidEmail");
+    }
     if(empty($mdp)){
         return throwError("emptyPassword");
+    }else{
+        $mdp = password_hash($mdp, PASSWORD_BCRYPT, array('cost' => 12));
     }
 
     global $db;
     
-    $query = $db->prepare('INSERT INTO user (pseudo, mdp) VALUES (:pseudo, :mdp)');
-    $params = array("pseudo" => $username, "mdp" => $mdp);
+    $query = $db->prepare('INSERT INTO user (pseudo, hashed_mdp) VALUES (:pseudo, :hashedmdp)');
+    $params = array("pseudo" => $username, "hashedmdp" => $mdp);
     $query->execute($params);
-    // debug($query->errorInfo());
     return $db->lastInsertId();
 }
 
@@ -52,16 +55,21 @@ function deleteUser($username, $mdp){
         return throwError("emptyPassword");
     }
 
-    global $db;
-    $query = $db->prepare('DELETE FROM user WHERE pseudo = :pseudo AND mdp = :mdp LIMIT 1');
-    $params = array("pseudo" => $username, "mdp" => $mdp);
-    $query->execute($params);
-    
-    return $query->rowCount();
+    if(!invalidID(checkUser($username, $mdp))){
+
+        global $db;
+        
+        $query = $db->prepare('DELETE FROM user WHERE pseudo = :pseudo LIMIT 1');
+        $params = array("pseudo" => $username);
+        $query->execute($params);
+        
+        return $query->rowCount();
+    }else{
+        return false;
+    }
 }
 
 function getUserById($userId){
-    // debug($userId);
     if(invalidId($userId)){
         return throwError("invalidUserId");
     }
@@ -115,24 +123,22 @@ function deleteProposition($userId, $propositionId){
     if(invalidId($propositionId)){
         return throwError("invalidPropositionId");
     }
-    // debug($userId);
-    // debug($propositionId);
     global $db;
 
     //checking that the proposition exists
     $propositionObject = getProposition($userId , $propositionId);
     if($propositionObject){
-
+        
         //deleting related comments
         $query = $db->prepare("DELETE FROM commenter WHERE `id_prop` = :propositionId");
         $params = array("propositionId" => $propositionId);
         $query->execute($params);
-
+        
         //deleting related votes
         $query = $db->prepare("DELETE FROM voter WHERE `id_prop` = :propositionId");
         $params = array("propositionId" => $propositionId);
         $query->execute($params);
-
+        
         //deleting the proposition
         $query = $db->prepare("DELETE FROM proposition WHERE `id_user` = :userId AND `id_prop` = :propositionId LIMIT 1");
         $params = array("userId" => $userId, "propositionId" => $propositionId);
@@ -145,7 +151,6 @@ function deleteProposition($userId, $propositionId){
 }
 
 function getProposition($userId , $propositionId){
-    // debug($propositionId);
     if(invalidId($userId)){
         return throwError("invalidUserId");
     }
@@ -157,7 +162,6 @@ function getProposition($userId , $propositionId){
     $params = array("userId" => $userId, "propositionId" => $propositionId);
     $query->execute($params);
     $resultObject = $query->fetch(PDO::FETCH_OBJ);
-
     return $resultObject;
 }
 
@@ -233,8 +237,6 @@ function userVotedForProposition($userId, $propositionId){
     $params = array("userId" => $userId, "propositionId" => $propositionId);
     $query->execute($params);
     $result = $query->fetch(PDO::FETCH_OBJ);
-    // debug($params);
-    // var_dump($result);
     return $result != false;
 }
 
@@ -381,13 +383,16 @@ function invalidId($userId){
     return (empty($userId) || $userId < 1);
     //TODO check if full digit
 }
-
+function invalidEmail($email){
+    return (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL));
+}
 function throwError($type){
 
     $resultsArray = [
         "emptyPassword" => -10,
         "invalidCommentContent" => -15,
         "invalidCommentId" => -18,
+        "invalidEmail" => -19,
         "invalidPropositionContent" => -20,
         "invalidPropositionId" => -30,
         "invalidPropositionTitle" => -40,

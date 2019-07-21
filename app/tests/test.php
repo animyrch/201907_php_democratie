@@ -5,7 +5,75 @@ if(true){
     echo "Tests start successful";
 }
 $errorResults = [];
+$testEmailWrong = "kokfoezfze@okfoezkfze";
+$testEmail = "emirgokhanozcelik@gmail.com";
+eraseDb();
 /******************* testing login functionalities START ********************/
+
+
+/******************* testing user Crud START ********************/
+//user creation
+$testPseudo = "newPseudo";
+$testMDp = "FZEJ232";
+
+$newUserId = createUser($testPseudo, $testMDp, $testEmailWrong);
+if($newUserId !== -19){
+    $errorContent = "incorrect email is not detected during user creation";
+    $errorNo = 3242;
+    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+}
+
+$newUserId = createUser($testPseudo, $testMDp, $testEmail);
+
+global $db;
+$query = $db->prepare('SELECT id_user FROM user WHERE pseudo = :pseudo');
+$params = array("pseudo" => $testPseudo);
+$query->execute($params);
+$userId = $query->fetchColumn();
+if($newUserId != $userId){
+    $errorContent = "user was not created correctly";
+    $errorNo = 2870;
+    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+}
+//check user
+$resultId = checkUser($testPseudo, $testMDp);
+if(invalidId($resultId)){
+    $errorContent = "user check fails";
+    $errorNo = 6256;
+    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+}
+
+//user deletion
+deleteUser($testPseudo, $testMDp);
+$result = checkUser($testPseudo, $testMDp);
+
+if($result != -70){
+    $errorContent = "user was not deleted correctly";
+    $errorNo = 2898;
+    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+}
+
+//getting a pseudo by id
+$testPseudo = "FJZEHOf";
+$testMDp = "FZ2432";
+$newUserId = createUser($testPseudo, $testMDp, $testEmail);
+
+$userInfo = getUserById($newUserId);
+if($testPseudo != $userInfo->pseudo){
+    $errorContent = "correct pseudo was not found";
+    $errorNo = 3918;
+    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
+}
+deleteUser($testPseudo, $testMDp);
+
+/******************* testing user Crud END ********************/
+
+
+//creating three users for the next tests
+
+createUser("FZEFZEL", "3243532532", $testEmail);
+createUser("ZEKFfezkf", "DZAKR32", $testEmail);
+createUser("D32LRK", "FZEFK32", $testEmail);
 
 //check user should respond according to the following array
 $correctUsername = "user1";
@@ -15,7 +83,7 @@ $result2 = checkUser("", ""); // -1 - should first check for username
 $result3 = checkUser("wrongValue", "user1mdp"); //-3
 $result4 = checkUser("user1", "wrongValue"); //-3
 $result5 = checkUser("user1", ""); // -2
-$result6 = checkUser("user1", "user1mdp"); // -2
+// $result6 = checkUser("user1", "user1mdp"); // -2
 
 if($result1 !== -70){
     $errorContent = "checkUser doesn't verify username correctly";
@@ -47,21 +115,15 @@ if($result5 !== -10){
     array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
 }
 
-if($result6 !== 1){
-    $errorContent = "existing user was not found";
-    $errorNo = 1903;
-    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
-}
-
 /******************* testing login functionalities END ********************/
 
-
+eraseDb();
 /******************* testing proposition Crud START ********************/
 
 //Creating a proposition
 $testTitle = "Test Title";
 $testContent = "Test content for the test proposition with a test title from the test user User2.";
-$testUser = 2; //for User2
+$testUser = createUser("KDOeje", "fezjfzFZEZz", $testEmail);
 
 //error management
 $resultCreatePropositionWithEmptyTitle = createProposition("", $testContent, $testUser);
@@ -112,7 +174,7 @@ if($resultCreatePropositionWithInvalidUserId3 !== -50){
 
 if($resultCreateCorrectProposition < 1){
     $errorContent = "a new proposition is not correctly created";
-    $errorNo = 9893;
+    $errorNo = 3213;
     array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
 }
 
@@ -121,7 +183,7 @@ if($resultCreateCorrectProposition < 1){
 //Reading propositions of a user
 $testTitle = "A new proposition";
 $testContent = "Test content for the new proposition during a proposition read test.";
-$testUser = 1; //for User1
+$testUser = createUser("jiejzijifez", "ZEFZEFzejfzeiji323", $testEmail);
 createProposition($testTitle, $testContent, $testUser);
 
 //error management
@@ -161,7 +223,7 @@ foreach($resultGetCorrectPropositions as $key => $proposition){
 }
 if(!$titleMatch){
     $errorContent = "correct proposition title was not present";
-    $errorNo = 1989;
+    $errorNo = 3999;
     array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
 }
 if(!$titleMatch){
@@ -173,7 +235,7 @@ if(!$titleMatch){
 //Deleting a proposition of a user
 $testTitle = "A proposition to be deleted";
 $testContent = "Test content for the new proposition during a proposition deletion test.";
-$testUser = 2; //for User2
+$testUser = createUser("FZEFzekfz", "FZEFZEé+°23423", $testEmail);
 $testPropositionId = createProposition($testTitle, $testContent, $testUser);
 //error management
 $resultDeletePropositionWithInvalidUserId = deleteProposition("", $testPropositionId);
@@ -217,7 +279,7 @@ if($propositionMatch){
 //reading a specific proposition
 $testTitle = "A new proposition to get";
 $testContent = "Test content for the new proposition to be targetted during a proposition read test.";
-$testUser = 1; //for User1
+$testUser = createUser("FZEZfezfez", "FZEK+3423423°+", $testEmail);
 $testPropositionId = createProposition($testTitle, $testContent, $testUser);
 
 //error management
@@ -249,14 +311,14 @@ if($resultGetCorrectProposition->title != $testTitle){
 }
 if($resultGetCorrectProposition->contenu != $testContent){
     $errorContent = "correct proposition content was not present";
-    $errorNo = 3989;
+    $errorNo = 9829;
     array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
 }
 
 //Updating a proposition
 $testTitle = "Test Title for update";
 $testContent = "Test content for the test proposition update with a test title from the test user User2.";
-$testUser = 2; //for User2
+$testUser = createUser("EZFZEKFZEFZ", "JT43JJE2K33K2rfezkfze", $testEmail);
 $testPropositionId = createProposition($testTitle, $testContent, $testUser);
 
 $newTestTitle = "New title for test update";
@@ -311,7 +373,7 @@ if($newPropositionContents->contenu !== $newTestContent){
 //submitting a proposition to vote
 $testTitle = "Test Title for submittoVote";
 $testContent = "Test content for the test validate update for vote with a test title from the test user User2.";
-$testUser = 2; //for User2
+$testUser = 5; //for User2
 $testPropositionId = createProposition($testTitle, $testContent, $testUser);
 $resultSubmitPropositionWithEmptyUserId = submitPropositionToVote(null, $testPropositionId);
 $resultSubmitPropositionWithEmptyPropositionId = submitPropositionToVote($testUser, null);
@@ -366,7 +428,6 @@ if(!is_array($propositionsAvailableForVoting)){
 }
 
 foreach($votedPropositionContainer as $votedProposition){
-    // var_dump($votedProposition);
     if(property_exists($votedProposition, "date_valid")){
         $noError *= $votedProposition->date_valid != "";
     }else{
@@ -384,7 +445,7 @@ if($hasError || !$noError){
 /******************* testing proposition Crud END ********************/
 
 
-
+eraseDb();
 
 
 
@@ -394,17 +455,15 @@ if($hasError || !$noError){
 
 $testTitleVoted = "Test Title  - to be voted";
 $testContentVoted = "Test content for the testing getting voted status for a given proposition by a given user - User 2. To be voted";
-$testUser = 2; //for User 2
-$testPropositionIdVoted = createProposition($testTitleVoted, $testContentVoted, $testUser);
-// var_dump($testTitleVoted, $testContentVoted, $testUser);
-submitPropositionToVote($testUser, $testPropositionIdVoted);
-//Checking if inneed, Upon creating a proposition, user automatically votes for their proposition.
+$proposer = createUser("FZEFZEZZE", "FZEJjfize32", $testEmail);
+$testPropositionIdVoted = createProposition($testTitleVoted, $testContentVoted, $proposer);
+submitPropositionToVote($proposer, $testPropositionIdVoted);
+//Checking if indeed, Upon creating a proposition, user automatically votes for their proposition.
 
 $resultGetVotedStatusWithIncorrectUserid = userVotedForProposition(-2, $testPropositionIdVoted);
-$resultGetVotedStatusWithIncorrectPropositionid = userVotedForProposition($testUser, null);
-$resultGetVotedStatus = userVotedForProposition($testUser, $testPropositionIdVoted);
-$resultGetVotedStatusForOtherUser = userVotedForProposition(1, $testPropositionIdVoted);
-// var_dump($resultGetVotedStatusForVoted);
+$resultGetVotedStatusWithIncorrectPropositionid = userVotedForProposition($proposer, null);
+$resultGetVotedStatus = userVotedForProposition($proposer, $testPropositionIdVoted);
+$resultGetVotedStatusForOtherUser = userVotedForProposition(createUser("FZEFZSzefz", "fZEFZEojojfezf3", $testEmail), $testPropositionIdVoted);
 
 if($resultGetVotedStatusWithIncorrectUserid != -50){
     $errorContent = "empty user id error is not detected during getting voted status";
@@ -421,10 +480,9 @@ if(!$resultGetVotedStatus){
     $errorNo = 3843;
     array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
 }
-// debug(userVotedForProposition(100, $testPropositionIdVoted));
 if($resultGetVotedStatusForOtherUser){
     $errorContent = "unvoted proposition is indicated as voted";
-    $errorNo = 3843;
+    $errorNo = 2329;
     array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
 }
 
@@ -432,13 +490,13 @@ if($resultGetVotedStatusForOtherUser){
 //voting for someone else's proposition - voteForProposition()
 $testTitleVoted = "Test Title-VotebyOther";
 $testContentVoted = "Test content for the testing vote for other user's propositions";
-$testUser = 3; //for User 3
+$testUser = createUser("ZFZJEZ", "FZfezfezFZE33E", $testEmail);
+$votingUser= createUser("FZEA23", "fzizjeiffjez", $testEmail);
 
 //creating proposition with user 3
 $testPropositionId = createProposition($testTitleVoted, $testContentVoted, $testUser);
-
 //checking that user 1 hasn't voted for it yet
-if(userVotedForProposition(1, $testPropositionId)){
+if(userVotedForProposition($votingUser, $testPropositionId)){
     $errorContent = "unwanted for vote found";
     $errorNo = 7391;
     array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
@@ -446,12 +504,11 @@ if(userVotedForProposition(1, $testPropositionId)){
 
 //getting the number of nbPour for that proposition
 $nbPourAmountOld = getProposition($testUser, $testPropositionId)->nbPour;
-
-//voting for that proposition with user 1
-voteForProposition(1, $testPropositionId);
+// voting for that proposition with user 1
+voteForProposition($votingUser, $testPropositionId);
 
 //checking that user1 has voted for it
-if(!userVotedForProposition(1, $testPropositionId)){
+if(!userVotedForProposition($votingUser, $testPropositionId)){
     $errorContent = "searched for vote was not found";
     $errorNo = 3562;
     array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
@@ -466,7 +523,7 @@ if($nbPourAmountOld != ($nbPourAmountNew-1)){
     array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
 }
 //checking that user1 can't vote for or against that proposition anymore
-voteForProposition(1, $testPropositionId);
+voteForProposition($votingUser, $testPropositionId);
 $nbPourAmountNew2 = getProposition($testUser, $testPropositionId)->nbPour;
 
 if( (integer) $nbPourAmountNew === (integer) ($nbPourAmountNew2-1)){
@@ -478,13 +535,13 @@ if( (integer) $nbPourAmountNew === (integer) ($nbPourAmountNew2-1)){
 //voting against someone else's proposition - voteAgainstProposition()
 $testTitleVoted = "Test Title-VoteAgainstOther";
 $testContentVoted = "Test content for the testing vote against other user's propositions";
-$testUser = 2; //for User 2
-
+$testUser = createUser("fezfzFZFZe", "FEZJ32R23Kf", $testEmail);
+$otherTestUSer = createUser("FZEFfezfze", "FZE3ré3Rfz3", $testEmail);
 //creating proposition with user 2
 $testPropositionId = createProposition($testTitleVoted, $testContentVoted, $testUser);
 
 //checking that user 3 hasn't voted for it yet
-if(userVotedForProposition(3, $testPropositionId)){
+if(userVotedForProposition($otherTestUSer, $testPropositionId)){
     $errorContent = "unwanted against vote found";
     $errorNo = 5414;
     array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
@@ -493,11 +550,11 @@ if(userVotedForProposition(3, $testPropositionId)){
 //getting the number of nbContre for that proposition
 $nbAgainstAmountOld = getProposition($testUser, $testPropositionId)->nbContre;
 
-//voting against that proposition with user 3
-voteAgainstProposition(3, $testPropositionId);
+//voting against that proposition with user $otherTestUSer
+voteAgainstProposition($otherTestUSer, $testPropositionId);
 
-//checking that user3 has voted against it
-if(!userVotedForProposition(3, $testPropositionId)){
+//checking that $otherTestUSer has voted against it
+if(!userVotedForProposition($otherTestUSer, $testPropositionId)){
     $errorContent = "searched against vote was not found";
     $errorNo = 1987;
     array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
@@ -513,7 +570,7 @@ if($nbAgainstAmountOld != ($nbAgainstAmountNew-1)){
 }
 
 //checking that user3 can't vote for or against that proposition anymore
-voteAgainstProposition(3, $testPropositionId);
+voteAgainstProposition($otherTestUSer, $testPropositionId);
 $nbAgainstAmountNew2 = getProposition($testUser, $testPropositionId)->nbContre;
 if((integer) $nbAgainstAmountNew === (integer) ($nbAgainstAmountNew2-1)){
     $errorContent = "votedAgainst counter is increased again even though user had already voted for it";
@@ -525,48 +582,7 @@ if((integer) $nbAgainstAmountNew === (integer) ($nbAgainstAmountNew2-1)){
 
 
 
-
-/******************* testing user Crud START ********************/
-//user creation
-$testPseudo = "newPseudo";
-$testMDp = "FZEJ232";
-
-$newUserId = createUser($testPseudo, $testMDp);
-$verificationId = checkUser($testPseudo, $testMDp);
-
-if($newUserId != $verificationId){
-    $errorContent = "user was not created correctly";
-    $errorNo = 2870;
-    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
-}
-
-//user deletion
-deleteUser($testPseudo, $testMDp);
-$result = checkUser($testPseudo, $testMDp);
-
-if($result != -70){
-    $errorContent = "user was not deleted correctly";
-    $errorNo = 2898;
-    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
-}
-
-//getting a pseudo by id
-$testPseudo = "FJZEHOf";
-$testMDp = "FZ2432";
-$newUserId = createUser($testPseudo, $testMDp);
-
-$userInfo = getUserById($newUserId);
-
-if($testPseudo != $userInfo->pseudo){
-    $errorContent = "correct pseudo was not found";
-    $errorNo = 3918;
-    array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
-}
-deleteUser($testPseudo, $testMDp);
-
-/******************* testing user Crud END ********************/
-
-
+eraseDb();
 
 
 
@@ -575,7 +591,7 @@ deleteUser($testPseudo, $testMDp);
 //testing comment creation
 $propTitleForComment = "Test Title-forComment";
 $propContentForComment = "Test content for the testing commenting system";
-$testUser = 1; //for User 1
+$testUser = createUser("FZEFfezfztr", "FZKFZEKf23423(TGgg", $testEmail); 
 $testPropId = createProposition($propTitleForComment, $propContentForComment, $testUser);
 $testCommentContent = "This is a comment for testing comment system";
 
@@ -592,7 +608,7 @@ if($testCommentIdIncorrectUser !== -50){
 }
 if($testCommentIdIncorrectProp !== -30){
     $errorContent = "incorrect proposition id is not detected during comment creation";
-    $errorNo = 4183;
+    $errorNo = 4829;
     array_push($errorResults, array("errorno" => $errorNo, "errorcontent" => $errorContent));
 }
 if($testCommentIdIncorrectComment !== -15){
@@ -619,7 +635,6 @@ $testCommentContentUser1 = "This is a comment from User 3 for testing comment ga
 $testCommentContentUser2 = "This is a comment from User 2 for testing comment gathering system";
 $commentFromUser1 = createComment($commentUser1, $testPropId, $testCommentContentUser1);
 $commentFromUser2 = createComment($commentUser2, $testPropId, $testCommentContentUser2);
-// debug($commentFromUser1);
 
 $commentObjectsArrayIncorrectProp = getComments(null);
 $commentObjectsArray = getComments($testPropId);
@@ -657,7 +672,7 @@ if(!$commentMatch){
 
 $propTitleForComment = "Test Title-deleteComment";
 $propContentForComment = "Test content for the testing comment deletion";
-$testUser = 1; //for User 1
+$testUser = createUser("JVLzKFJ", "KFZEjfez5432", $testEmail); 
 $testPropId = createProposition($propTitleForComment, $propContentForComment, $testUser);
 $testCommentToDelete = "This is a comment to be deleted for testing comment system";
 $testCommentId = createComment($testUser, $testPropId, $testCommentToDelete);
@@ -705,9 +720,9 @@ if($propositionMatch){
 
 $propTitleForComment = "Test-deleteOthersComment";
 $propContentForComment = "Test content for the testing comment deletion of other uers which should be impossible";
-$creatingUser = 1; //for User 1
-$commentingUser = 2; //for User 2
-$deletingUser = 3; //for User 3
+$creatingUser = createUser("FZEfzefezf", "FZEFjfijijez323", $testEmail);
+$commentingUser = createUser("FZEfFZEF3ezf", "FZEFZE324234fzef", $testEmail);
+$deletingUser = createUser("ZJ3R23Fez", "fezfezFZEFZ2342", $testEmail);
 $testPropId = createProposition($propTitleForComment, $propContentForComment, $creatingUser);
 $testCommentToDelete = "This is a comment to be deleted for testing comment system, specifically comments of other users which should be impossible";
 $testCommentId = createComment($commentingUser, $testPropId, $testCommentToDelete);
@@ -737,6 +752,7 @@ if(!$commentMatch){
 
 
 
+eraseDb();
 
 
 
@@ -748,8 +764,14 @@ if(!$commentMatch){
 
 
 
-
-
+function eraseDb(){
+    global $db;
+    $sql = "TRUNCATE democratie.voter;
+    TRUNCATE democratie.commenter;
+    DELETE FROM democratie.proposition; ALTER TABLE democratie.proposition AUTO_INCREMENT = 1;
+    DELETE FROM democratie.user;ALTER TABLE democratie.user AUTO_INCREMENT = 1;";
+    $query = $db->exec($sql);
+}
 
 if(empty($errorResults)){
     echo "<br><br>all PHP tests were succesfull";
