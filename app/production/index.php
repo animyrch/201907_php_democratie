@@ -8,7 +8,6 @@ if(isset($_GET["username"])){
 }else{
     $username = "";
 };
-// createUser("test", "test", "test@est.com");
 ?>
 <div class="tile  is-vertical container landingForms">
     
@@ -93,20 +92,24 @@ if(isset($_GET["username"])){
         <p class="control">
             <p class="help is-danger">
             <?php if(isset($_GET["signupResult"])) {
+
                 $signupResult = $_GET["signupResult"];
 
-                if($signupResult == "emptyUsername"){ ?>
-                    Vous devez rentrer un pseudo
-                <?php } ?>
+                if($signupResult == "emptyUsername"){
+                ?>Vous devez rentrer un pseudo<?php }
 
-                <?php if($signupResult == "emptyPassword"){ ?>
-                    Vous devez rentrer un mot de passe
-                <?php } ?>
+                if($signupResult == "emptyPassword"){
+                ?>Vous devez rentrer un mot de passe<?php }
 
-                <?php if($signupResult == "emptyEmail"){ ?>
-                    Vous devez rentrer un email valid
-                <?php } 
-                } ?>
+                if($signupResult == "emptyEmail"){
+                    ?>Vous devez rentrer un email valid<?php }
+
+                if($signupResult == "failed"){
+                    ?>Une erreur est survenu lors de la création du compte<?php }
+
+                if($signupResult == "success"){
+                    ?>Votre compte est créé. Un email vous est envoyé pour son activation.<?php }
+            } ?>
             </p>
             <button type="submit" class="button is-success">
                 Envoyer

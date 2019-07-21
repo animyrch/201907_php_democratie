@@ -25,7 +25,6 @@ if(!empty($_GET["action"])){
         $displayMsg = "Vous avez voté contre cette proposition";
     }
 }
-
 $userPropositions = getUserPropositions($userId);
 $propositionsToVote = getPropositionsToVote();
 ?>
