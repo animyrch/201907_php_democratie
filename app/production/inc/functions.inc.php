@@ -40,9 +40,9 @@ function createUser($username, $mdp, $email){
     }
 
     global $db;
-    
-    $query = $db->prepare('INSERT INTO user (pseudo, hashed_mdp, e_mail) VALUES (:pseudo, :hashedmdp, :email)');
-    $params = array("pseudo" => $username, "hashedmdp" => $mdp, "email" => $email);
+    $userToken = createUniqueToken();
+    $query = $db->prepare("INSERT INTO user (pseudo, hashed_mdp, e_mail, user_token) VALUES (:pseudo, :hashedmdp, :email, :userToken)");
+    $params = array("pseudo" => $username, "hashedmdp" => $mdp, "email" => $email, "userToken" => $userToken);
     $query->execute($params);
     return $db->lastInsertId();
 }

@@ -2,6 +2,7 @@
 require_once __DIR__."/../inc/session.inc.php";
 require_once __DIR__."/../inc/header.inc.php";
 require_once __DIR__."/../inc/functions.inc.php";
+require_once __DIR__."/../../config/env.php";
 
 if($_SERVER["REQUEST_METHOD"] == "POST"){
     if(isset($_POST["username"]) && isset($_POST["mdp"]) && isset($_POST["email"])){
@@ -20,9 +21,20 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             header("Location: ../index.php?signupResult=emptyEmail");
         }
         else{
-            header("Location: ../index.php?signupResult=success");
+            $userToken = getUserById($userCreateResult)->user_token;
+            $subject = " Activation compte pour $username sur Democratie 2.0";
+            $message = "Coucou, voici ton lien d'activation. Clique le et le compte (voire le monde) sera à toi. $userToken";
+            $message = wordwrap($message, 70, "\n", true);
+            if(mail($email,$subject,$message)){
+                $message = "Un nouveau compte est créé pour $email sur Democratie 2.0";
+                mail($_WEBMASTERMAIL,$subject,$message);
+                header("Location: ../index.php?signupResult=success");
+            }else{
+                $message = "Création de compte a échoué pour $email sur Democratie 2.0";
+                mail($_WEBMASTERMAIL,$subject,$message);
+                header("Location: ../index.php?signupResult=failed");
+            }            
         }
-
     }
 }else{
     header("Location: ../index.php?signupResult=failed");
