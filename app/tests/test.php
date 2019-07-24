@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__."/../production/inc/functions.inc.php";
+require_once __DIR__."/../inc/functions.inc.php";
 
 if(true){
     echo "Tests start successful";
@@ -13,7 +13,7 @@ eraseDb();
 /******************* testing user Class ********************/
 /***********************************************************/
 
-require_once "../production/Class/User.php";
+require_once "../Class/User.php";
 
 // debug($userObject->db);
 

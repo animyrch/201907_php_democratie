@@ -8,6 +8,8 @@ if(!empty($_GET["action"])){
     if($action === "delete" && isset($_GET["proposition"])){
         if(deleteProposition($userId, $_GET["proposition"]) !== 1){
             $displayMsg = "Vous ne pouvez supprimer que vos propres propositions";
+        }else{
+            $displayMsg = "Proposition supprimée";
         }
     }
     if($action === "propositionUpdateFailed"){
@@ -15,6 +17,9 @@ if(!empty($_GET["action"])){
     }
     if($action === "propositionUpdated"){
         $displayMsg = "Proposition modifiée";
+    }
+    if($action === "propositionDone"){
+        $displayMsg = "Proposition ajoutée";
     }
     if($action === "voteFor" && isset($_GET["proposition"])){
         voteForProposition($userId, $_GET["proposition"]);

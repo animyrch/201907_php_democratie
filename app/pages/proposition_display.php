@@ -4,6 +4,7 @@ require_once __DIR__."/../inc/header.inc.php";
 
 $messageErreur = "";
 $propositionId = "";
+$proposer = null;
 $user = "";
 $alreadyVoted = 0;
 
@@ -11,7 +12,8 @@ if(!empty($_GET["alreadyVoted"])){
     $alreadyVoted = $_GET["alreadyVoted"];
 }
 if(!empty($_GET["user"])){
-    $proposer = $_GET["user"];
+    $proposerId = $_GET["user"];
+    $proposer = new User($proposerId);
 }else{
     $messageErreur = "Aucune utilisateur n'est associé avec cette séléction";
 }
@@ -22,11 +24,12 @@ if(!empty($_GET["propositionId"])){
 }
 
 require_once __DIR__."/../inc/functions.inc.php";
+require_once __DIR__."/../Class/User.php";
 
 // debug($_GET);
-$proposition = getProposition($proposer, $propositionId);
+$proposition = getProposition($proposerId, $propositionId);
 if($proposition){
-    $title = $proposition->title;
+    $title = $proposition->title . " - " . $proposer->username ;
     $contenu = $proposition->contenu;
 }else{
     header("Location: dashboard.php?action=propositionDisplayFailed");
@@ -53,7 +56,7 @@ if($proposition){
             <a href="dashboard.php?action=voteAgainst&proposition=<?=$propositionId?>" class="button is-danger is-rounded" <?php if($alreadyVoted == 1) echo " disabled "; ?>>Voter Contre Cette Proposition</a>
         </div>
         </article>
-        <form method="POST" action="?user=<?=$proposer?>&propositionId=<?=$propositionId?>&alreadyVoted=<?=$alreadyVoted?>&action=comment">
+        <form method="POST" action="?user=<?=$proposerId?>&propositionId=<?=$propositionId?>&alreadyVoted=<?=$alreadyVoted?>&action=comment">
             <div class="field">
                 <label class="label">Laisser un commentaire</label>
                 <div class="control">
@@ -104,7 +107,7 @@ $comments = getComments($propositionId);
                 </div>
                 <?php if($userId == $comment->id_user){ ?>
                 <footer class="tile is-1 is-child">
-                    <a  href="?user=<?=$proposer?>&propositionId=<?=$propositionId?>&alreadyVoted=<?=$alreadyVoted?>&action=deleteComment&commentToDelete=<?=$comment->id_comment?>" 
+                    <a  href="?user=<?=$proposerId?>&propositionId=<?=$propositionId?>&alreadyVoted=<?=$alreadyVoted?>&action=deleteComment&commentToDelete=<?=$comment->id_comment?>" 
                         class="card-footer-item">Delete</a>
                 </footer>
                 <?php } ?>

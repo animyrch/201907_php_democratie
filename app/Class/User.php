@@ -1,6 +1,5 @@
 <?php
 require_once "utils.php";
-// require_once "../production/inc/db-connect.inc.php";
 require_once "../inc/db-connect.inc.php";
 class User{
 
