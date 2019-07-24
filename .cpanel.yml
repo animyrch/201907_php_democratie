@@ -1,5 +1,5 @@
 ﻿---
 deployment:
   tasks:
-    - export DEPLOYPATH=/home/user/public_html/201907_democratie/
+    - export DEPLOYPATH=/home/user/public_html/201907_php_democratie/
     - /bin/cp -R app $DEPLOYPATH
