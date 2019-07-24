@@ -19,7 +19,7 @@ require_once __DIR__."/functions.inc.php";
     <img class="is-rounded" src="/201907_php_democratie/app/production/assets/Logo_JFVD.png">
       <?php if(!empty($userId)){ ?>
         <h1 class="is-1 title">
-          <?="Bonjour ".getUserById($userId)->pseudo?>
+          <?="Bonjour ".$userObject->username?>
         </h1>
         <h2 class="is-2 subtitle">
           <div><a class="button is-info is-inverted is-outlined" href="../index.php?action=disconnect">Se déconnecter</a></div>

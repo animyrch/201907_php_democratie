@@ -92,7 +92,7 @@ $comments = getComments($propositionId);
         <div class="comments tile is-ancestor is-vertical">
 
         <?php foreach($comments as $key => $comment){ 
-        $commenter = getUserById($comment->id_user);
+        $commenter = new User($comment->id_user);
         $commentTime =  $comment->date_comment;
         $commentTimeHumanReadable =  $commentTime; ?>
         <div class="card tile is-child">
@@ -100,7 +100,7 @@ $comments = getComments($propositionId);
                 <div class="content tile  is-11 is-child">
                     <?=$comment->comment?>
                     <br>
-                    <b><span>Par <?=$commenter->pseudo?></span>, le <time datetime="<?=$commentTime?>"><?=$commentTimeHumanReadable?></time></b>
+                    <b><span>Par <?=$commenter->username?></span>, le <time datetime="<?=$commentTime?>"><?=$commentTimeHumanReadable?></time></b>
                 </div>
                 <?php if($userId == $comment->id_user){ ?>
                 <footer class="tile is-1 is-child">
