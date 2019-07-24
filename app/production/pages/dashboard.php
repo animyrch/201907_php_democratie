@@ -31,11 +31,8 @@ $propositionsToVote = getPropositionsToVote();
 
 <section>
     <div class="container">
-        <h1>Bonjour Emir!</h1>
-        <hr>
-        <div><a href="../index.php?action=disconnect">Se déconnecter</a></div>
-        <hr>
-        <h3>VOS PROPOSITIONS</h3>
+        
+        <h4 class="subtitle is-4">Vos Propositions</h4>
         <div>Nombre de propositions : <?=count($userPropositions)?></div>
         <a href="proposition_create.php" class="button is-primary is-focused">Ajouter une proposition</a>
         <?php if($displayMsg != ""){ ?>
@@ -87,7 +84,7 @@ $propositionsToVote = getPropositionsToVote();
         </table>
 
         <hr>
-        <h3>Propositions soumises au vote</h3>
+        <h4 class="subtitle is-4">Propositions soumises au vote</h4>
 
         <table class="table">
             <thead>

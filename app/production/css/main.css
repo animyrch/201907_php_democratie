@@ -22,3 +22,21 @@
 .comment-button{
     text-align: center;
 }
+
+.hero{
+    height: 150px;
+    /* text-align: right; */
+}
+
+.hero .welcome-message{
+    text-align: center;
+}
+
+.hero img{
+    height: 150px;
+    float: right;
+}
+
+.hero .subtitle{
+    text-align: : right;
+}
