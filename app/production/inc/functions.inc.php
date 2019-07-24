@@ -2,124 +2,6 @@
 require_once __DIR__."/db-connect.inc.php";
 
 
-
-/**************** USER CRUD *************************/
-function createUser($username, $mdp, $email){
-    if(empty($username)){
-        return throwError("invalidUsername");
-    }
-    if(invalidEmail($email)){
-        return throwError("invalidEmail");
-    }
-    if(empty($mdp)){
-        return throwError("emptyPassword");
-    }else{
-        $mdp = password_hash($mdp, PASSWORD_BCRYPT, array('cost' => 12));
-    }
-
-    global $db;
-    $userToken = createUniqueToken();
-    $query = $db->prepare("INSERT INTO user (pseudo, hashed_mdp, e_mail, user_token) VALUES (:pseudo, :hashedmdp, :email, :userToken)");
-    $params = array("pseudo" => $username, "hashedmdp" => $mdp, "email" => $email, "userToken" => $userToken);
-    $query->execute($params);
-    return $db->lastInsertId();
-}
-
-function checkUser($username, $mdp){
-    
-    if(empty($username)){
-        return throwError("invalidUsername");
-    }
-    if(empty($mdp)){
-        return throwError("emptyPassword");
-    }
-
-    global $db;
-    
-    $query = $db->prepare('SELECT * FROM user WHERE pseudo = :pseudo');
-    $params = array("pseudo" => $username);
-    $query->execute($params);
-    $user = $query->fetch(PDO::FETCH_OBJ);
-    if($user && password_verify($mdp, $user->hashed_mdp)){
-        return (integer) $user->id_user;
-    }else{
-        return throwError("invalidUsernameOrPassword");
-    }
-}
-
-function getUserById($userId){
-    if(invalidId($userId)){
-        return throwError("invalidUserId");
-    }
-
-    global $db;
-    $query = $db->prepare("SELECT * FROM user WHERE `id_user` = :userId");
-    $params = array("userId" => $userId);
-    $query->execute($params);
-    $userObject = $query->fetch(PDO::FETCH_OBJ);
-    return $userObject;
-
-}
-
-function deleteUser($username, $mdp){
-    if(empty($username)){
-        return throwError("invalidUsername");
-    }
-    if(empty($mdp)){
-        return throwError("emptyPassword");
-    }
-
-    if(!invalidID(checkUser($username, $mdp))){
-
-        global $db;
-        
-        $query = $db->prepare('DELETE FROM user WHERE pseudo = :pseudo LIMIT 1');
-        $params = array("pseudo" => $username);
-        $query->execute($params);
-        
-        return $query->rowCount();
-    }else{
-        return false;
-    }
-}
-
-function validateUserAccount($userId, $userToken){
-    if(invalidId($userId)){
-        return throwError("invalidUserId");
-    }
-    if(empty($userToken)){
-        return throwError("invalidToken");
-    }
-    global $db;
-    
-    $query = $db->prepare('SELECT user_token FROM user WHERE id_user = :userId');
-    $params = array("userId" => $userId);
-    $query->execute($params);
-    $userTokenDb = $query->fetchColumn();
-
-    if($userTokenDb === $userToken){
-        $query = $db->prepare("UPDATE user SET account_state = 'validated' WHERE `id_user` = :userId;");
-        $params = array("userId" => $userId);
-        $query->execute($params);
-        return $query->rowCount();
-    }else{
-        return throwError("sqlError");
-    }
-}
-
-function loginUser($username, $mdp){
-    $result = checkUser($username, $mdp);
-
-    if(!invalidId($result)){
-        $user = getUserById($result);
-        if($user->account_state === "validated")
-            return $user->id_user;
-        else
-            return throwError("invalidAccountState");
-    }else{
-        return $result;
-    }
-}
 /**************** PROPOSITION CRUD *************************/
 
 function createProposition($title, $content, $userId){
@@ -410,11 +292,7 @@ function deleteComment($userId, $commentId){
 
 
 /**************** UTILITY FUNCTIONS *************************/
-function debug($elem){
-    echo "<pre>";
-    var_dump($elem);
-    echo "</pre>";
-}
+
 function createUniqueToken(){
     $token = bin2hex(random_bytes(16));
     return $token;

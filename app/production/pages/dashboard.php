@@ -100,11 +100,11 @@ $propositionsToVote = getPropositionsToVote();
             </thead>
             <tbody>
                 <?php foreach($propositionsToVote as $proposition){ 
-                    $proposer = getUserById($proposition->id_user);
+                    $proposer = new User($proposition->id_user);
                     $userVotedForThisProposition = userVotedForProposition($userId, $proposition->id_prop); ?>
                     <tr>
                         <th><?=$proposition->id_prop?></th>
-                        <td><?=$proposer->pseudo?></td>
+                        <td><?=$proposer->username?></td>
                         <td><?=$proposition->title?></td>
                         <td><?=($userVotedForThisProposition ? "déjà voté" : "")?></td>
                         <td><?=$proposition->nbPour?></td>

@@ -8,66 +8,84 @@ $errorResults = [];
 $testEmailWrong = "kokfoezfze@okfoezkfze";
 $testEmail = "emirgokhanozcelik@gmail.com";
 eraseDb();
-/******************* testing login functionalities START ********************/
 
+/***********************************************************/
+/******************* testing user Class ********************/
+/***********************************************************/
 
-/******************* testing user Crud START ********************/
-//user creation
+require_once "../production/Class/User.php";
+
+// debug($userObject->db);
+
+/****************user create*********************/
+
 $testPseudo = "newPseudo";
 $testMDp = "FZEJ232";
+$testEmailWrong = "FEZFZEFfefe";
+$testEmail = "test@test.com";
 
-$newUserId = createUser($testPseudo, $testMDp, $testEmailWrong);
+//Error management
+$newUserId = User::CreateUser($testPseudo, $testMDp, $testEmailWrong);
+
 if($newUserId !== -19){
     addToResults("incorrect email is not detected during user creation", __LINE__);
 }
-
-
-$newUserId = createUser($testPseudo, $testMDp, $testEmail);
+//correct use
+$newUserId = User::CreateUser($testPseudo, $testMDp, $testEmail);
 
 global $db;
 $query = $db->prepare('SELECT id_user FROM user WHERE pseudo = :pseudo');
 $params = array("pseudo" => $testPseudo);
 $query->execute($params);
 $userId = $query->fetchColumn();
-if($newUserId != $userId){
+
+if($newUserId !== $userId){
     addToResults("user was not created correctly", __LINE__);
 }
-//check user
-$resultId = checkUser($testPseudo, $testMDp);
+/****************user get *********************/
+
+$user = new User($newUserId);
+
+if($user->userId !== $userId){
+    addToResults("user id was not correctly obtained", __LINE__);
+}
+if($user->username !== $testPseudo){
+    addToResults("username was not correctly obtained", __LINE__);
+}
+if($user->email !== $testEmail){
+    addToResults("user email was not correctly obtained", __LINE__);
+}
+if($user->accountState !== "created"){
+    addToResults("account state was not correctly obtained", __LINE__);
+}
+
+
+/****************user login*********************/
+
+$resultId = User::CheckUser($testPseudo, $testMDp);
 if(invalidId($resultId)){
     addToResults("user check fails", __LINE__);
 }
 
-//user deletion
-deleteUser($testPseudo, $testMDp);
-$result = checkUser($testPseudo, $testMDp);
+/****************user delete*********************/
+User::DeleteUser($testPseudo, $testMDp);
+$resultId = User::CheckUser($testPseudo, $testMDp);
 
-if($result != -70){
+if($resultId != -70){
     addToResults("user was not deleted correctly", __LINE__);
 }
 
-//getting a pseudo by id
-$testPseudo = "FJZEHOf";
-$testMDp = "FZ2432";
-$newUserId = createUser($testPseudo, $testMDp, $testEmail);
+eraseDb();
 
-$userInfo = getUserById($newUserId);
-if($testPseudo != $userInfo->pseudo){
-    addToResults("correct pseudo was not found", __LINE__);
-}
-deleteUser($testPseudo, $testMDp);
+/******************* testing login functionalities START ********************/
 
-/******************* testing user Crud END ********************/
-
-/******************* testing login functionalities END ********************/
 // db shouldn't have any users. So all checkUser uses should fail
 
-$result1 = checkUser("wrongValue", "wrongValue"); //-3
-$result2 = checkUser("", ""); // -1 - should first check for username
-$result3 = checkUser("wrongValue", "user1mdp"); //-3
-$result4 = checkUser("user1", "wrongValue"); //-3
-$result5 = checkUser("user1", ""); // -2
-// $result6 = checkUser("user1", "user1mdp"); // -2
+$result1 = User::CheckUser("wrongValue", "wrongValue"); //-3
+$result2 = User::CheckUser("", ""); // -1 - should first check for username
+$result3 = User::CheckUser("wrongValue", "user1mdp"); //-3
+$result4 = User::CheckUser("user1", "wrongValue"); //-3
+$result5 = User::CheckUser("user1", ""); // -2
 
 if($result1 !== -70){
     addToResults("checkUser doesn't verify username correctly", __LINE__);
@@ -93,23 +111,23 @@ if($result5 !== -10){
 $correctUsername = "user1";
 $correctPassword = "user1mdp";
 $correctEmail = "test@test.com";
-$userId = createUser($correctUsername, $correctPassword, $correctEmail);
+$userId = User::CreateUser($correctUsername, $correctPassword, $correctEmail);
 
 //we check that user can't login yet since they have not activated their account
-$successfulLogin = loginUser($correctUsername, $correctPassword);
+$user = new User($userId);
+$successfulLogin = $user->accountState === "validated";
 
-if($successfulLogin !== -13){
+if($successfulLogin){
     addToResults("a newly created account shouldn't be able to login", __LINE__);
 }
-$userToken = getUserById($userId)->user_token;
-validateUserAccount($userId, $userToken);
+$userToken = $user->userToken;
+$user->validateAccount($userId, $userToken);
 
 //we check that user can login yet since they have activated their account
-$successfulLogin = loginUser($correctUsername, $correctPassword);
-if(invalidId($successfulLogin)){
-    addToResults("a validated  account should be able to login", __LINE__);
+$successfulLogin = $user->accountState === "validated";
+if(!$successfulLogin){
+    addToResults("a validated account should be able to login", __LINE__);
 }
-
 /******************* testing login functionalities END ********************/
 
 eraseDb();
@@ -118,7 +136,7 @@ eraseDb();
 //Creating a proposition
 $testTitle = "Test Title";
 $testContent = "Test content for the test proposition with a test title from the test user User2.";
-$testUser = createUser("KDOeje", "fezjfzFZEZz", $testEmail);
+$testUser = User::CreateUser("KDOeje", "fezjfzFZEZz", $testEmail);
 
 //error management
 $resultCreatePropositionWithEmptyTitle = createProposition("", $testContent, $testUser);
@@ -162,7 +180,7 @@ if($resultCreateCorrectProposition < 1){
 //Reading propositions of a user
 $testTitle = "A new proposition";
 $testContent = "Test content for the new proposition during a proposition read test.";
-$testUser = createUser("jiejzijifez", "ZEFZEFzejfzeiji323", $testEmail);
+$testUser = User::CreateUser("jiejzijifez", "ZEFZEFzejfzeiji323", $testEmail);
 createProposition($testTitle, $testContent, $testUser);
 
 //error management
@@ -204,7 +222,7 @@ if(!$titleMatch){
 //Deleting a proposition of a user
 $testTitle = "A proposition to be deleted";
 $testContent = "Test content for the new proposition during a proposition deletion test.";
-$testUser = createUser("FZEFzekfz", "FZEFZEé+°23423", $testEmail);
+$testUser = User::CreateUser("FZEFzekfz", "FZEFZEé+°23423", $testEmail);
 $testPropositionId = createProposition($testTitle, $testContent, $testUser);
 //error management
 $resultDeletePropositionWithInvalidUserId = deleteProposition("", $testPropositionId);
@@ -240,7 +258,7 @@ if($propositionMatch){
 //reading a specific proposition
 $testTitle = "A new proposition to get";
 $testContent = "Test content for the new proposition to be targetted during a proposition read test.";
-$testUser = createUser("FZEZfezfez", "FZEK+3423423°+", $testEmail);
+$testUser = User::CreateUser("FZEZfezfez", "FZEK+3423423°+", $testEmail);
 $testPropositionId = createProposition($testTitle, $testContent, $testUser);
 
 //error management
@@ -269,7 +287,7 @@ if($resultGetCorrectProposition->contenu != $testContent){
 //Updating a proposition
 $testTitle = "Test Title for update";
 $testContent = "Test content for the test proposition update with a test title from the test user User2.";
-$testUser = createUser("EZFZEKFZEFZ", "JT43JJE2K33K2rfezkfze", $testEmail);
+$testUser = User::CreateUser("EZFZEKFZEFZ", "JT43JJE2K33K2rfezkfze", $testEmail);
 $testPropositionId = createProposition($testTitle, $testContent, $testUser);
 
 $newTestTitle = "New title for test update";
@@ -310,7 +328,7 @@ if($newPropositionContents->contenu !== $newTestContent){
 //submitting a proposition to vote
 $testTitle = "Test Title for submittoVote";
 $testContent = "Test content for the test validate update for vote with a test title from the test user User2.";
-$testUser = 5; //for User2
+$testUser = User::CreateUser("ZF44ZJEZ", "FZfezfezF__ZE33E", $testEmail);
 $testPropositionId = createProposition($testTitle, $testContent, $testUser);
 $resultSubmitPropositionWithEmptyUserId = submitPropositionToVote(null, $testPropositionId);
 $resultSubmitPropositionWithEmptyPropositionId = submitPropositionToVote($testUser, null);
@@ -378,7 +396,7 @@ eraseDb();
 
 $testTitleVoted = "Test Title  - to be voted";
 $testContentVoted = "Test content for the testing getting voted status for a given proposition by a given user - User 2. To be voted";
-$proposer = createUser("FZEFZEZZE", "FZEJjfize32", $testEmail);
+$proposer = User::CreateUser("FZEFZEZZE", "FZEJjfize32", $testEmail);
 $testPropositionIdVoted = createProposition($testTitleVoted, $testContentVoted, $proposer);
 submitPropositionToVote($proposer, $testPropositionIdVoted);
 //Checking if indeed, Upon creating a proposition, user automatically votes for their proposition.
@@ -386,7 +404,7 @@ submitPropositionToVote($proposer, $testPropositionIdVoted);
 $resultGetVotedStatusWithIncorrectUserid = userVotedForProposition(-2, $testPropositionIdVoted);
 $resultGetVotedStatusWithIncorrectPropositionid = userVotedForProposition($proposer, null);
 $resultGetVotedStatus = userVotedForProposition($proposer, $testPropositionIdVoted);
-$resultGetVotedStatusForOtherUser = userVotedForProposition(createUser("FZEFZSzefz", "fZEFZEojojfezf3", $testEmail), $testPropositionIdVoted);
+$resultGetVotedStatusForOtherUser = userVotedForProposition(User::CreateUser("FZEFZSzefz", "fZEFZEojojfezf3", $testEmail), $testPropositionIdVoted);
 
 if($resultGetVotedStatusWithIncorrectUserid != -50){
     addToResults("empty user id error is not detected during getting voted status", __LINE__);
@@ -405,8 +423,8 @@ if($resultGetVotedStatusForOtherUser){
 //voting for someone else's proposition - voteForProposition()
 $testTitleVoted = "Test Title-VotebyOther";
 $testContentVoted = "Test content for the testing vote for other user's propositions";
-$testUser = createUser("ZFZJEZ", "FZfezfezFZE33E", $testEmail);
-$votingUser= createUser("FZEA23", "fzizjeiffjez", $testEmail);
+$testUser = User::CreateUser("ZFZJEZ", "FZfezfezFZE33E", $testEmail);
+$votingUser= User::CreateUser("FZEA23", "fzizjeiffjez", $testEmail);
 
 //creating proposition with user 3
 $testPropositionId = createProposition($testTitleVoted, $testContentVoted, $testUser);
@@ -442,8 +460,8 @@ if( (integer) $nbPourAmountNew === (integer) ($nbPourAmountNew2-1)){
 //voting against someone else's proposition - voteAgainstProposition()
 $testTitleVoted = "Test Title-VoteAgainstOther";
 $testContentVoted = "Test content for the testing vote against other user's propositions";
-$testUser = createUser("fezfzFZFZe", "FEZJ32R23Kf", $testEmail);
-$otherTestUSer = createUser("FZEFfezfze", "FZE3ré3Rfz3", $testEmail);
+$testUser = User::CreateUser("fezfzFZFZe", "FEZJ32R23Kf", $testEmail);
+$otherTestUSer = User::CreateUser("FZEFfezfze", "FZE3ré3Rfz3", $testEmail);
 //creating proposition with user 2
 $testPropositionId = createProposition($testTitleVoted, $testContentVoted, $testUser);
 
@@ -490,7 +508,7 @@ eraseDb();
 //testing comment creation
 $propTitleForComment = "Test Title-forComment";
 $propContentForComment = "Test content for the testing commenting system";
-$testUser = createUser("FZEFfezfztr", "FZKFZEKf23423(TGgg", $testEmail); 
+$testUser = User::CreateUser("FZEFfezfztr", "FZKFZEKf23423(TGgg", $testEmail); 
 $testPropId = createProposition($propTitleForComment, $propContentForComment, $testUser);
 $testCommentContent = "This is a comment for testing comment system";
 
@@ -557,7 +575,7 @@ if(!$commentMatch){
 
 $propTitleForComment = "Test Title-deleteComment";
 $propContentForComment = "Test content for the testing comment deletion";
-$testUser = createUser("JVLzKFJ", "KFZEjfez5432", $testEmail); 
+$testUser = User::CreateUser("JVLzKFJ", "KFZEjfez5432", $testEmail); 
 $testPropId = createProposition($propTitleForComment, $propContentForComment, $testUser);
 $testCommentToDelete = "This is a comment to be deleted for testing comment system";
 $testCommentId = createComment($testUser, $testPropId, $testCommentToDelete);
@@ -597,9 +615,9 @@ if($propositionMatch){
 
 $propTitleForComment = "Test-deleteOthersComment";
 $propContentForComment = "Test content for the testing comment deletion of other uers which should be impossible";
-$creatingUser = createUser("FZEfzefezf", "FZEFjfijijez323", $testEmail);
-$commentingUser = createUser("FZEfFZEF3ezf", "FZEFZE324234fzef", $testEmail);
-$deletingUser = createUser("ZJ3R23Fez", "fezfezFZEFZ2342", $testEmail);
+$creatingUser = User::CreateUser("FZEfzefezf", "FZEFjfijijez323", $testEmail);
+$commentingUser = User::CreateUser("FZEfFZEF3ezf", "FZEFZE324234fzef", $testEmail);
+$deletingUser = User::CreateUser("ZJ3R23Fez", "fezfezFZEFZ2342", $testEmail);
 $testPropId = createProposition($propTitleForComment, $propContentForComment, $creatingUser);
 $testCommentToDelete = "This is a comment to be deleted for testing comment system, specifically comments of other users which should be impossible";
 $testCommentId = createComment($commentingUser, $testPropId, $testCommentToDelete);
@@ -623,8 +641,6 @@ if(!$commentMatch){
 /******************* testing comment Crud END ********************/
 
 
-showTestResults($errorResults);
-
 
 eraseDb();
 
@@ -635,6 +651,9 @@ eraseDb();
 
 
 
+
+
+showTestResults($errorResults);
 
 
 function eraseDb(){

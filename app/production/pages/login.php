@@ -7,7 +7,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     if(isset($_POST["username"]) && isset($_POST["mdp"])){
         $username = $_POST["username"];
         $mdp = $_POST["mdp"];
-        $loginResult = loginUser($username, $mdp);
+        $loginResult = User::CheckUser($username, $mdp);
 
         if($loginResult === -60){
             header("Location: ../index.php?action=emptyUsername");
